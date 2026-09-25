@@ -4,7 +4,7 @@ Lo que cambió en cada versión del plugin. **Lo más nuevo va arriba.** El
 formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y
 las versiones, [SemVer](https://semver.org/lang/es/).
 
-## [Sin publicar]
+## [0.4.2] — 2026-09-25
 
 ### Corregido
 
