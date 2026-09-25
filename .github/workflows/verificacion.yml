@@ -1,4 +1,4 @@
-# La verificación del plugin, menos `claude plugin validate .`
+# La verificación del plugin, menos `claude plugin validate`
 # (pediría instalar y autenticar el CLI): en cada push y PR, para que lo que
 # se funde a main no rompa comanda-main.
 name: Verificación
@@ -26,4 +26,4 @@ jobs:
         run: bash pruebas/sin-citas.sh
 
       - name: shellcheck
-        run: shellcheck bin/comanda-main pruebas/comanda-main.sh pruebas/sin-citas.sh
+        run: shellcheck bin/comanda-main pruebas/comanda-main.sh pruebas/sin-citas.sh pruebas/juguete-worktrees.sh

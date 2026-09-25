@@ -43,6 +43,21 @@ cada pieza tiene un origen reconocible.
 Lo propio es la primera línea de este README: las metodologías clásicas
 suponen un equipo que recuerda, y un agente no recuerda nada.
 
+## Requisitos
+
+- **git 2.31 o más**: `comanda-main` usa `rev-parse --path-format`.
+- **bash**: `comanda-main` y las pruebas son guiones de bash.
+- **`gh`**, sólo si «Cómo se funde a la principal» en `docs/COMANDA.md` es
+  `PR`: lo usan `entregar` y `cerrar`.
+- **Un remoto con la principal publicada, aunque se trabaje solo**: el buzón,
+  las reservas, el triage y el cierre se publican ahí. Sin ella,
+  `comanda-main` se niega y dice que hay que crearla.
+- **Que la principal acepte push directo**: el push es el candado. Una
+  principal que exige PR para todo push no está soportada; sí se puede
+  proteger contra `--force` y contra borrarla. Si el remoto rechaza el push,
+  `comanda-main` lo dice con el texto de git, sale con 1 y no descarta nada.
+- **Probado sólo en Linux.**
+
 ## Instalar
 
 En la raíz del proyecto:
@@ -112,16 +127,19 @@ y reinicia Claude Code. Qué cambió en cada versión está en `CHANGELOG.md`.
 ## Desarrollar
 
 ```bash
-claude plugin validate .                     # el manifiesto y los skills
+claude plugin validate .claude-plugin/plugin.json   # el manifiesto del plugin
 bash -n bin/comanda-main                     # la sintaxis
 bash pruebas/comanda-main.sh                 # el candado, con dos clones y un remoto local
-shellcheck bin/comanda-main pruebas/comanda-main.sh
+bash pruebas/sin-citas.sh                    # nada público cita lo privado
+shellcheck bin/comanda-main pruebas/comanda-main.sh pruebas/sin-citas.sh pruebas/juguete-worktrees.sh
 claude --plugin-dir /ruta/a/Comanda          # probar un cambio sin instalarlo
 ```
 
-El CI corre todo esto en cada push y PR, menos `claude plugin validate .`.
-`bash pruebas/juguete-worktrees.sh` prueba los skills de punta a punta en un
-repo de juguete; se corre a mano, porque abre varias sesiones de `claude -p`.
+`validate` lleva la ruta del manifiesto y no `.`: con `marketplace.json` en
+la misma carpeta, `.` valida sólo el marketplace. El CI corre todo esto en
+cada push y PR, menos `validate`. `bash pruebas/juguete-worktrees.sh` prueba
+los skills de punta a punta en un repo de juguete; se corre a mano, porque
+abre varias sesiones de `claude -p`.
 
 Con `--plugin-dir`, el `bin/` que va primero en el `PATH` es el del plugin
 instalado: si el cambio toca `bin/`, antepón `PATH=/ruta/a/Comanda/bin:$PATH`.

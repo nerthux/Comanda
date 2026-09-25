@@ -60,13 +60,15 @@ de otro, en llamadas paralelas de una misma respuesta—, y en vez de
    pueden haber quedado:
 
    ```bash
-   grep -ho 'B-[0-9]\{3\}' W/docs/BUZON.md W/docs/archivo/BUZON_descartados.md \
-       W/docs/ROADMAP.md W/TODO.md 2>/dev/null | sort -u | tail -1
+   grep -ho 'B-[0-9]\{3\}' W/docs/BUZON.md W/docs/archivo/BUZON_descartados.md W/docs/ROADMAP.md W/TODO.md
    ```
 
-   El triage cita el id de origen en el ROADMAP y en `TODO.md` —`(B-007)`— y
-   por eso cuentan. Los ejemplos de los documentos usan `B-0NN`, que no casa con
-   el patrón, así que no estorban.
+   Sin `sort` ni `tail`: `allowed-tools` autoriza `grep` suelto, y una
+   tubería se niega. El más alto lo sacas tú de la salida; un archivo que no
+   exista sólo agrega una línea de error, que se ignora. El triage cita el id
+   de origen en el ROADMAP y en `TODO.md` —`(B-007)`— y por eso cuentan. Los
+   ejemplos de los documentos usan `B-0NN`, que no casa con el patrón, así
+   que no estorban.
 
    Una entrada ya triada puede no quedar en ninguno de los cuatro —la que se
    hizo acaba en el CHANGELOG o en `docs/archivo/`—, pero el asunto de cada

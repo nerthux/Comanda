@@ -3,7 +3,7 @@ name: next
 description: Arranca la siguiente tarea del sprint, con el contexto recién limpio
 argument-hint: (sin argumentos) | <número de tarea>
 disable-model-invocation: true
-allowed-tools: Bash(git config user.name), Bash(git fetch:*), Bash(git show:*), Bash(git ls-tree:*), Bash(git merge-base:*), Bash(git log:*)
+allowed-tools: Bash(git config user.name), Bash(git branch --show-current), Bash(git status:*), Bash(git fetch:*), Bash(git show:*), Bash(git ls-tree:*), Bash(git merge-base:*), Bash(git log:*), Bash(date:*)
 ---
 
 $ARGUMENTS

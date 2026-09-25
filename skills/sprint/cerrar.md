@@ -108,15 +108,18 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
     Después, la rama local, sólo si ya está entera en la principal:
 
     ```bash
-    git fetch origin && git merge-base --is-ancestor <tema> origin/main \
-        && git branch -D <tema>
+    git fetch origin
+    git merge-base --is-ancestor <tema> origin/main
+    git branch -D <tema>
     ```
 
-    `-D` y no `-d`: el merge se hizo en `W` o en el PR, y `-d` compara contra
-    el checkout donde estás, que sigue atrás, así que se niega siempre. Si la
-    comprobación falla, **no la borres**: la rama tiene algo que no llegó a la
-    principal (un commit sin subir); di cuál y que lo decida su dueño. Si el
-    worktree es de otra persona, dile que lo quite en la suya.
+    Tres llamadas, no una con `&&`: el tercero sólo si el segundo salió con
+    0. `-D` y no `-d`: el merge se hizo en `W` o en el PR, y `-d` compara
+    contra el checkout donde estás, que sigue atrás, así que se niega
+    siempre. Si la comprobación falla, **no la borres**: la rama tiene algo
+    que no llegó a la principal (un commit sin subir); di cuál y que lo
+    decida su dueño. Si el worktree es de otra persona, dile que lo quite en
+    la suya.
 
 ## Al terminar
 

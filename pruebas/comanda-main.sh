@@ -146,5 +146,47 @@ else
     en alex "$CM" descartar >/dev/null 2>&1
 fi
 
+echo "14) una principal que rechaza el push no es una carrera"
+git init -q --bare -b main protegido.git
+git clone -q protegido.git prot 2>/dev/null
+git -C prot config user.name prot; git -C prot config user.email prot@local
+mkdir -p prot/docs; printf '# Buzón\n\n## Sin triar\n\nB-001\n' > prot/docs/BUZON.md
+git -C prot add -A && git -C prot commit -qm inicio && git -C prot push -q origin main 2>/dev/null
+# El hook entra después de sembrar main: rechaza todo push, como una principal protegida.
+printf '#!/bin/sh\necho "principal protegida" >&2\nexit 1\n' > protegido.git/hooks/pre-receive
+chmod +x protegido.git/hooks/pre-receive
+W="$(ruta prot)" || exit 1; echo "B-002 prot" >> "$W/docs/BUZON.md"
+err="$(en prot "$CM" publicar --reserva "B-002 prot" 2>&1 >/dev/null)"; igual "$?" 1 "con --reserva sale con 1, no RECHAZADO (3)"
+grep -q "principal protegida" <<<"$err" && bien "y muestra el texto de git" || mal "no muestra el texto de git: «$err»"
+grep -q "no fue una carrera" <<<"$err" && bien "y dice que no fue una carrera" || mal "no dice que no fue una carrera: «$err»"
+igual "$(tail -1 "$W/docs/BUZON.md")" "B-002 prot" "lo anotado no se descartó"
+err="$(en prot "$CM" publicar "B-002 prot" 2>&1 >/dev/null)"; igual "$?" 1 "sin --reserva también sale con 1"
+grep -q "tres intentos" <<<"$err" && mal "sin --reserva dio tres vueltas" || bien "y no da tres vueltas"
+[ -e "$W/.git" ] && bien "el worktree se queda" || mal "el worktree se borró"
+en prot "$CM" descartar >/dev/null
+[ -e "$W" ] && mal "descartar no borró el worktree" || bien "descartar deja limpio"
+
+echo "15) un remoto al que no se llega"
+git clone -q remoto.git caido 2>/dev/null
+git -C caido remote set-url origin "$T/no-existe.git"
+err="$(en caido "$CM" ruta 2>&1 >/dev/null)"; igual "$?" 1 "ruta sale con 1, no con el 128 de git"
+grep -q "no se pudo alcanzar el remoto 'origin'" <<<"$err" && bien "y dice que no se llegó al remoto" \
+    || mal "no dice que no se llegó al remoto: «$err»"
+grep -q "no-existe.git" <<<"$err" && bien "con la URL" || mal "sin la URL: «$err»"
+[ -e "$T/caido/.comanda-main" ] && mal "quedó un .comanda-main" || bien "no deja worktree de paso"
+
+echo "16) un .comanda-main podado a mano (sin su .git)"
+W="$(ruta gabriel)" || exit 1; echo p > "$W/podado.txt"
+rm "$W/.git"; git -C gabriel worktree prune
+err="$(en gabriel "$CM" ruta 2>&1 >/dev/null)"; igual "$?" 1 "ruta sale con 1, no «already exists»"
+grep -q "comanda-main descartar" <<<"$err" && bien "y manda a descartar" || mal "no manda a descartar: «$err»"
+[ -e "$W/podado.txt" ] && bien "lo que había dentro sigue ahí" || mal "ruta borró lo que había dentro"
+en gabriel "$CM" descartar >/dev/null; igual "$?" 0 "descartar sale con 0"
+[ -e "$W" ] && mal "descartar no borró el directorio" || bien "y el directorio ya no existe"
+W="$(ruta gabriel)" || exit 1; en gabriel "$CM" descartar >/dev/null
+mkdir "$W"
+en gabriel "$CM" ruta >/dev/null 2>&1; igual "$?" 0 "uno vacío no estorba: ruta sale con 0"
+en gabriel "$CM" descartar >/dev/null
+
 echo
 if [ "$FALLAS" -eq 0 ]; then echo "Todo pasa."; else echo "$FALLAS fallas."; exit 1; fi
