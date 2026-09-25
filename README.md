@@ -43,6 +43,21 @@ cada pieza tiene un origen reconocible.
 Lo propio es la primera línea de este README: las metodologías clásicas
 suponen un equipo que recuerda, y un agente no recuerda nada.
 
+## Requisitos
+
+- **git 2.31 o más**: `comanda-main` usa `rev-parse --path-format`.
+- **bash**: `comanda-main` y las pruebas son guiones de bash.
+- **`gh`**, sólo si «Cómo se funde a la principal» en `docs/COMANDA.md` es
+  `PR`: lo usan `entregar` y `cerrar`.
+- **Un remoto con la principal publicada, aunque se trabaje solo**: el buzón,
+  las reservas, el triage y el cierre se publican ahí. Sin ella,
+  `comanda-main` se niega y dice que hay que crearla.
+- **Que la principal acepte push directo**: el push es el candado. Una
+  principal que exige PR para todo push no está soportada; sí se puede
+  proteger contra `--force` y contra borrarla. Si el remoto rechaza el push,
+  `comanda-main` lo dice con el texto de git, sale con 1 y no descarta nada.
+- **Probado sólo en Linux.**
+
 ## Instalar
 
 En la raíz del proyecto:
