@@ -5,7 +5,7 @@
 #
 #   bash pruebas/sin-citas.sh [ruta…]
 #
-# Sin rutas, revisa las del plugin. Los nombres del cliente salen de
+# Sin rutas, revisa todo lo del plugin, README y CHANGELOG incluidos. Los nombres del cliente salen de
 # «Nombres del lado del cliente» en docs/COMANDA.md, para que este guion no los
 # publique; sin ese archivo no se revisan. Sale con 0 si no hay citas; si las
 # hay, dice dónde y sale con 1.
@@ -14,7 +14,7 @@ set -uo pipefail
 
 cd "$(dirname "$0")/.." || exit 1
 YO="pruebas/$(basename "$0")"
-[ "$#" -gt 0 ] || set -- .claude-plugin skills bin plantillas pruebas .github
+[ "$#" -gt 0 ] || set -- .claude-plugin skills bin plantillas pruebas .github README.md CHANGELOG.md
 FALLAS=0
 
 bien() { echo "  ✔ $*"; }
