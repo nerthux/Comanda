@@ -29,14 +29,14 @@ permitidos() {
     esac
 }
 
-# Sin acentos ni mayúsculas: «Semáforo» tiene que caer con «Semaforo».
+# Sin acentos ni mayúsculas: «Almacén» tiene que caer con «almacen».
 llano() {
     sed 's/á/a/g; s/Á/a/g; s/é/e/g; s/É/e/g; s/í/i/g; s/Í/i/g; s/ó/o/g; s/Ó/o/g;
          s/ú/u/g; s/Ú/u/g; s/ü/u/g; s/Ü/u/g; s/ñ/n/g; s/Ñ/n/g' | tr '[:upper:]' '[:lower:]'
 }
 
-# Cada nombre entero y partido por sus jorobas (SemaforoDeRegil → Semaforo,
-# Regil), con las piezas de cinco letras o más: el texto los escribe sueltos.
+# Cada nombre entero y partido por sus jorobas (LibroMayor → Libro,
+# Mayor), con las piezas de cinco letras o más: el texto los escribe sueltos.
 NOMBRES=()
 if [ -f docs/COMANDA.md ]; then
     linea="$(grep -m1 'Nombres del lado del cliente:' docs/COMANDA.md)"
