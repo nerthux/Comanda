@@ -127,16 +127,19 @@ y reinicia Claude Code. Qué cambió en cada versión está en `CHANGELOG.md`.
 ## Desarrollar
 
 ```bash
-claude plugin validate .                     # el manifiesto y los skills
+claude plugin validate .claude-plugin/plugin.json   # el manifiesto del plugin
 bash -n bin/comanda-main                     # la sintaxis
 bash pruebas/comanda-main.sh                 # el candado, con dos clones y un remoto local
-shellcheck bin/comanda-main pruebas/comanda-main.sh
+bash pruebas/sin-citas.sh                    # nada público cita lo privado
+shellcheck bin/comanda-main pruebas/comanda-main.sh pruebas/sin-citas.sh pruebas/juguete-worktrees.sh
 claude --plugin-dir /ruta/a/Comanda          # probar un cambio sin instalarlo
 ```
 
-El CI corre todo esto en cada push y PR, menos `claude plugin validate .`.
-`bash pruebas/juguete-worktrees.sh` prueba los skills de punta a punta en un
-repo de juguete; se corre a mano, porque abre varias sesiones de `claude -p`.
+`validate` lleva la ruta del manifiesto y no `.`: con `marketplace.json` en
+la misma carpeta, `.` valida sólo el marketplace. El CI corre todo esto en
+cada push y PR, menos `validate`. `bash pruebas/juguete-worktrees.sh` prueba
+los skills de punta a punta en un repo de juguete; se corre a mano, porque
+abre varias sesiones de `claude -p`.
 
 Con `--plugin-dir`, el `bin/` que va primero en el `PATH` es el del plugin
 instalado: si el cambio toca `bin/`, antepón `PATH=/ruta/a/Comanda/bin:$PATH`.
