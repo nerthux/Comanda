@@ -10,19 +10,25 @@
 #
 #   comanda-main ruta                       deja el worktree en <remoto>/<principal>
 #                                           recién traído e imprime su ruta
-#   comanda-main publicar "<mensaje>"       commit + push; si lo rechazan, rebasa
-#                                           sobre lo nuevo y reintenta
-#   comanda-main publicar --reserva "<m>"   commit + push; si lo rechazan, NO rebasa:
-#                                           descarta, vuelve a lo nuevo y sale con 3
+#   comanda-main publicar "<mensaje>"       commit + push; si alguien publicó antes,
+#                                           rebasa sobre lo nuevo y reintenta
+#   comanda-main publicar --reserva "<m>"   commit + push; si alguien publicó antes,
+#                                           NO rebasa: descarta, vuelve a lo nuevo
+#                                           y sale con 3
 #   comanda-main descartar                  tira lo no publicado y borra el worktree
+#
+# Si el remoto rechaza el push sin que la principal haya avanzado (un hook,
+# una principal protegida), no fue una carrera: sale con 1, dice por qué con
+# el texto de git y no descarta nada.
 #
 # El cuerpo del commit va en el mismo <mensaje>, tras una línea en blanco; un
 # argumento de más es error, no se ignora.
 #
 # Variables: COMANDA_REMOTO (origin), COMANDA_PRINCIPAL (main).
 #
-# Códigos de salida: 0 bien · 1 error · 2 hay cambios sin publicar ·
-# 3 RECHAZADO (reserva: recalcula y reintenta) · 4 CONFLICTO al rebasar.
+# Códigos de salida: 0 bien · 1 error (también un push que el remoto rechaza) ·
+# 2 hay cambios sin publicar · 3 RECHAZADO (reserva: recalcula y reintenta) ·
+# 4 CONFLICTO al rebasar.
 
 set -euo pipefail
 
@@ -126,10 +132,14 @@ cmd_publicar() {
             "arréglalos y vuelve a publicar"
     fi
 
-    local err
+    local err antes
     for _ in 1 2 3; do
-        # La carrera se reconoce por el texto, y en inglés sea cual sea LANG:
-        # traducido, no se reconocería.
+        # El rechazo se reconoce por el texto, y en inglés sea cual sea LANG:
+        # traducido, no se reconocería. Pero el texto no basta para saber si
+        # fue una carrera: «[remote rejected]» (un hook, una principal
+        # protegida) trae «rejected» igual que «[rejected] (fetch first)».
+        # Lo que distingue la carrera es que la punta de la principal avanzó.
+        antes="$(git rev-parse "$ARRIBA")"
         if err="$(LC_ALL=C git push -q "$REMOTO" "$(git -C "$WT" rev-parse HEAD):refs/heads/$PRINCIPAL" 2>&1)"; then
             echo "PUBLICADO $(git -C "$WT" rev-parse --short HEAD) en $ARRIBA"
             quitar
@@ -140,6 +150,13 @@ cmd_publicar() {
             falla "el push falló por algo que no es una carrera"
         fi
         traer
+        if [ "$(git rev-parse "$ARRIBA")" = "$antes" ]; then
+            echo "$err" >&2
+            falla "el remoto '$REMOTO' rechazó el push a '$PRINCIPAL' y no fue una carrera:" \
+                "la principal no avanzó. Suele ser un hook o una principal protegida que" \
+                "exige PR; Comanda necesita que acepte push directo. Lo tuyo sigue en $WT" \
+                "sin publicar ('comanda-main descartar' para tirarlo)"
+        fi
         if [ "$reserva" = 1 ]; then
             git -C "$WT" reset -q --hard "$ARRIBA"
             echo "RECHAZADO: alguien publicó en $PRINCIPAL antes; el worktree ya está en lo nuevo: recalcula ahí y reintenta"
@@ -161,5 +178,5 @@ case "${1:-}" in
     ruta)      cmd_ruta ;;
     publicar)  shift; cmd_publicar "$@" ;;
     descartar) cmd_descartar ;;
-    *) sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+    *) sed -n '2,31p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
