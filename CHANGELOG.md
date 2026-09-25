@@ -4,6 +4,19 @@ Lo que cambió en cada versión del plugin. **Lo más nuevo va arriba.** El
 formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y
 las versiones, [SemVer](https://semver.org/lang/es/).
 
+## [Sin publicar]
+
+### Corregido
+
+- **`/comanda:buzon` saca el id siguiente de los encabezados de las
+  entradas**, en el buzón y en los descartados, más el último asunto
+  `Buzón:` de la principal; ya no de cualquier `B-` que aparezca en el
+  ROADMAP o en `TODO.md`. Un id de otro proyecto citado ahí inflaba la
+  numeración.
+- **`pruebas/sin-citas.sh` sin rutas revisa también `README.md` y
+  `CHANGELOG.md`** del plugin, que son públicos igual; antes había que
+  pasárselos a mano.
+
 ## [0.4.1] — 2026-09-25
 
 ### Corregido
