@@ -3,5 +3,16 @@
   "displayName": "Comanda",
   "description": "Método de trabajo con agentes: el estado vive en el repo, no en la sesión. Buzón, triage, sprints cortos y arranque en frío.",
   "version": "0.4.0",
-  "author": { "name": "Gabriel Covarrubias" }
+  "author": { "name": "Gabriel Covarrubias" },
+  "license": "MIT",
+  "repository": "https://github.com/nerthux/Comanda",
+  "homepage": "https://github.com/nerthux/Comanda",
+  "keywords": [
+    "método",
+    "sprints",
+    "buzón",
+    "triage",
+    "equipo",
+    "worktrees"
+  ]
 }
