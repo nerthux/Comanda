@@ -84,7 +84,13 @@ Hay dos caminos, y los dos son una receta para que la siga el agente:
   `plantillas/ARRANCAR.md`, que copia el esqueleto `plantillas/proyecto/`.
 
 Las plantillas están en este repo y en la copia instalada,
-`~/.claude/plugins/cache/comanda/comanda/<versión>/`.
+`~/.claude/plugins/cache/comanda/comanda/<versión>/`. El agente las copia de
+ahí, no de memoria. Si ningún proyecto tuyo tiene el plugin todavía, clona
+este repo:
+
+```bash
+git clone https://github.com/nerthux/Comanda.git ~/Comanda
+```
 
 El repo es el proyecto, no la aplicación: los documentos, los datos y el
 código viven juntos, y el código, si lo hay, en su carpeta.
@@ -96,9 +102,50 @@ odoo/  o  app/   sólo si hay código; un repo hijo va aparte e ignorado, declar
 .worktrees/      un sprint por carpeta, que crea /comanda:sprint abrir; excluida de git
 ```
 
-**Si un push a la principal despliega**, que la CI ignore los push de sólo
-documentos, o cada entrada del buzón será un deploy (ver
-`plantillas/ADOPTAR.md`).
+### Arrancar
+
+1. Ten a mano lo que se le propuso al cliente, quiénes van a trabajar y quién
+   mueve el camino crítico. Crea el remoto vacío, privado porque llevará
+   cosas del cliente.
+2. Crea la carpeta del proyecto, abre Claude Code ahí y pídele:
+
+   > Arranca este proyecto con Comanda siguiendo
+   > `~/Comanda/plantillas/ARRANCAR.md`. El remoto es `<url>` y la
+   > propuesta está en `<ruta>`.
+
+3. El agente te va a preguntar lo que no puede saber: el cliente y cómo se
+   le pregunta, y si el código, si lo hay, va en `app/` o en un repo hijo
+   (Odoo.sh, un GitHub del cliente o una CI que despliega al push). Lo demás
+   lo copia del esqueleto y lo llena.
+4. Revisa `docs/COMANDA.md` y el primer `docs/ROADMAP.md` antes del primer
+   commit. El agente sube la principal: sin ella, `comanda-main` no
+   funciona.
+5. `/comanda:sprint abrir <tema>` abre el primer sprint contra el ROADMAP,
+   sin pasar por el buzón. Luego `/clear` y `/comanda:next`.
+
+### Adoptar
+
+1. Antes que nada, averigua si un push a la principal despliega. Si
+   despliega, que la CI ignore los push que sólo tocan documentos, o cada
+   entrada del buzón será un deploy.
+2. Abre Claude Code en la raíz del proyecto y pídele:
+
+   > Adopta Comanda en este proyecto siguiendo
+   > `~/Comanda/plantillas/ADOPTAR.md`, en una rama aparte y en su propio
+   > worktree.
+
+3. El agente pasa lo que ya hay a los documentos del método sin perder
+   nada: las decisiones conservan sus ids, la bitácora pasa tal cual al
+   CHANGELOG y lo abierto va al ROADMAP. Lo que el proyecto ya hacía y el
+   método no sabe va a «Reglas del proyecto» de `docs/COMANDA.md`.
+4. Si hay un `docs/SPRINT.md` abierto del método viejo, decides tú si se
+   termina como antes o se pasa a Comanda.
+5. Pruébalo antes de fundir, sin tocar el remoto real: un clon `--bare` en
+   una carpeta temporal, con la rama como `main`, y ahí `/comanda:estado` y
+   `/comanda:sprint abrir`. La rama la funde una persona.
+
+En los dos casos, quien clone el proyecto después recibe el plugin con
+`.claude/settings.json` al confiar en la carpeta.
 
 ## En equipo
 
