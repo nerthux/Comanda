@@ -56,22 +56,22 @@ de otro, en llamadas paralelas de una misma respuesta—, y en vez de
 
 1. **El id siguiente** es el más alto que exista **más uno**, con tres dígitos
    (`B-007`). Los ids **no se reusan**, ni los de las entradas ya triadas o
-   descartadas, así que búscalo, **dentro de `W`**, en los cuatro sitios donde
-   pueden haber quedado:
+   descartadas. Cuenta sólo el **encabezado** de cada entrada, no cualquier
+   `B-` que aparezca en un texto: una entrada, el ROADMAP o `TODO.md` pueden
+   citar el id de otro proyecto, y eso inflaría la numeración. Búscalo,
+   **dentro de `W`**, en los dos archivos que llevan encabezados:
 
    ```bash
-   grep -ho 'B-[0-9]\{3\}' W/docs/BUZON.md W/docs/archivo/BUZON_descartados.md W/docs/ROADMAP.md W/TODO.md
+   grep -ho '^### B-[0-9]\{3\}' W/docs/BUZON.md W/docs/archivo/BUZON_descartados.md
    ```
 
    Sin `sort` ni `tail`: `allowed-tools` autoriza `grep` suelto, y una
    tubería se niega. El más alto lo sacas tú de la salida; un archivo que no
-   exista sólo agrega una línea de error, que se ignora. El triage cita el id
-   de origen en el ROADMAP y en `TODO.md` —`(B-007)`— y por eso cuentan. Los
-   ejemplos de los documentos usan `B-0NN`, que no casa con el patrón, así
-   que no estorban.
+   exista sólo agrega una línea de error, que se ignora. Los ejemplos de los
+   documentos usan `B-0NN`, que no casa con el patrón, así que no estorban.
 
-   Una entrada ya triada puede no quedar en ninguno de los cuatro —la que se
-   hizo acaba en el CHANGELOG o en `docs/archivo/`—, pero el asunto de cada
+   Una entrada ya triada no queda en ninguno de los dos —acaba en el
+   ROADMAP, en el CHANGELOG o en `docs/archivo/`—, pero el asunto de cada
    `publicar` del buzón cita sus ids y el último es el más alto. Así
    que busca también el último, con el remoto y la principal de «Ramas»:
 
