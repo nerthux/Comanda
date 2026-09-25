@@ -1,0 +1,7 @@
+# Los datos del cliente no van en git; sólo su README.md, que dice dónde viven.
+/datos/*
+!/datos/README.md
+
+# El repo hijo, si lo hay (Odoo.sh, un GitHub del cliente): va aparte, no como
+# submódulo, y se declara en docs/COMANDA.md, «Reglas del proyecto».
+# /odoo/

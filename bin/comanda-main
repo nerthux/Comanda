@@ -1,0 +1,165 @@
+#!/usr/bin/env bash
+# comanda-main — escribir en la rama principal sin tocar el checkout de nadie.
+#
+# Todo lo que Comanda escribe en la rama principal (el buzón, las reservas de
+# un sprint, el triage, el cierre) se hace en un worktree desacoplado y de
+# paso, .comanda-main/ dentro del checkout donde se corre (excluido en
+# .git/info/exclude), puesto en <remoto>/<principal>, y se publica con push.
+# El push es el candado: si alguien publicó antes, se rechaza. Al publicar, el
+# worktree se borra; si algo falla, se queda para resolverlo.
+#
+#   comanda-main ruta                       deja el worktree en <remoto>/<principal>
+#                                           recién traído e imprime su ruta
+#   comanda-main publicar "<mensaje>"       commit + push; si lo rechazan, rebasa
+#                                           sobre lo nuevo y reintenta
+#   comanda-main publicar --reserva "<m>"   commit + push; si lo rechazan, NO rebasa:
+#                                           descarta, vuelve a lo nuevo y sale con 3
+#   comanda-main descartar                  tira lo no publicado y borra el worktree
+#
+# El cuerpo del commit va en el mismo <mensaje>, tras una línea en blanco; un
+# argumento de más es error, no se ignora.
+#
+# Variables: COMANDA_REMOTO (origin), COMANDA_PRINCIPAL (main).
+#
+# Códigos de salida: 0 bien · 1 error · 2 hay cambios sin publicar ·
+# 3 RECHAZADO (reserva: recalcula y reintenta) · 4 CONFLICTO al rebasar.
+
+set -euo pipefail
+
+REMOTO="${COMANDA_REMOTO:-origin}"
+PRINCIPAL="${COMANDA_PRINCIPAL:-main}"
+
+falla() { echo "comanda-main: $*" >&2; exit "${CODIGO:-1}"; }
+
+git rev-parse --git-dir >/dev/null 2>&1 || falla "no estás dentro de un repositorio git"
+git remote get-url "$REMOTO" >/dev/null 2>&1 \
+    || falla "no hay remoto '$REMOTO': el modo equipo necesita uno (COMANDA_REMOTO)"
+
+COMUN="$(git rev-parse --path-format=absolute --git-common-dir)"
+RAIZ="$(git rev-parse --show-toplevel)"
+case "$RAIZ" in */.comanda-main) RAIZ="${RAIZ%/.comanda-main}" ;; esac
+# Todo corre desde el checkout: si la shell está dentro del worktree de paso,
+# al borrarlo git se quedaría sin directorio y saldría con 128.
+cd "$RAIZ"
+WT="$RAIZ/.comanda-main"
+EXCLUDE="$COMUN/info/exclude"
+mkdir -p "$COMUN/info"
+grep -qxF '/.comanda-main/' "$EXCLUDE" 2>/dev/null || echo '/.comanda-main/' >> "$EXCLUDE"
+ARRIBA="$REMOTO/$PRINCIPAL"
+
+# El fetch y el push corren desde el checkout, no desde el worktree de paso: un
+# remoto con URL relativa (../repo.git) sólo apunta bien desde ahí. Las refs y
+# los objetos son comunes, así que lo traído se ve en los dos.
+traer() {
+    git fetch -q "$REMOTO" "$PRINCIPAL" && return 0
+    local rc=$? c=0
+    # Un proyecto desde cero no tiene todavía la principal en el remoto.
+    # Se distingue por el código de ls-remote, no por el texto de git, que
+    # cambia con LANG.
+    git ls-remote -q --exit-code "$REMOTO" "refs/heads/$PRINCIPAL" >/dev/null 2>&1 || c=$?
+    [ "$c" != 2 ] || falla "el remoto '$REMOTO' no tiene la rama '$PRINCIPAL';" \
+        "créala primero (un commit y 'git push $REMOTO $PRINCIPAL' desde un checkout)," \
+        "o di cuál es con COMANDA_PRINCIPAL"
+    exit "$rc"
+}
+
+pendiente() {
+    # Imprime lo que el worktree tiene sin publicar: cambios y commits.
+    git -C "$WT" status --porcelain
+    git -C "$WT" log --oneline "$ARRIBA..HEAD" 2>/dev/null || true
+}
+
+cmd_ruta() {
+    traer
+    if [ ! -e "$WT/.git" ]; then
+        git worktree prune
+        git worktree add -q --detach "$WT" "$ARRIBA"
+    else
+        local p
+        p="$(pendiente)"
+        if [ -n "$p" ]; then
+            echo "$p" >&2
+            CODIGO=2 falla "el worktree de $PRINCIPAL ($WT) tiene cambios sin publicar;" \
+                "publícalos (comanda-main publicar) o tíralos (comanda-main descartar)"
+        fi
+        git -C "$WT" checkout -q --detach "$ARRIBA"
+    fi
+    echo "$WT"
+}
+
+quitar() { git worktree remove --force "$WT" 2>/dev/null || rm -rf "$WT"; git worktree prune; }
+
+cmd_descartar() {
+    if [ -e "$WT/.git" ]; then
+        git -C "$WT" rebase --abort >/dev/null 2>&1 || true
+        git -C "$WT" merge --abort >/dev/null 2>&1 || true
+    fi
+    quitar
+    echo "descartado: $WT ya no existe"
+}
+
+cmd_publicar() {
+    local reserva=0
+    if [ "${1:-}" = "--reserva" ]; then reserva=1; shift; fi
+    # Un segundo argumento se perdería sin aviso: suele ser el cuerpo del commit.
+    [ "$#" -le 1 ] || falla "sobra un argumento: el cuerpo del commit va en el" \
+        "mismo argumento que el título, tras una línea en blanco"
+    local mensaje="${1:-}"
+    [ -e "$WT/.git" ] || falla "no hay worktree de $PRINCIPAL; corre antes 'comanda-main ruta'"
+
+    git -C "$WT" add -A
+    if ! git -C "$WT" diff --cached --quiet; then
+        [ -n "$mensaje" ] || falla "falta el mensaje del commit"
+        printf '%s\n' "$mensaje" | git -C "$WT" commit -q -F -
+    fi
+    if [ -z "$(git -C "$WT" log --oneline "$ARRIBA..HEAD")" ]; then
+        echo "nada que publicar"
+        quitar
+        return 0
+    fi
+    # Un choque resuelto a mano puede dejar un marcador; no llega a la principal.
+    # No es --check: ése también rechaza los espacios finales del markdown.
+    # Tampoco cuenta =======: suelto es el subrayado de un título setext, y en
+    # un choque de verdad siempre va entre <<<<<<< y >>>>>>>, que ya bastan.
+    if git -C "$WT" diff -U0 "$ARRIBA" | grep -qE '^\+(<{7}|>{7})( |$)'; then
+        falla "quedan marcadores de conflicto (<<<<<<<, >>>>>>>) en $WT;" \
+            "arréglalos y vuelve a publicar"
+    fi
+
+    local err
+    for _ in 1 2 3; do
+        # La carrera se reconoce por el texto, y en inglés sea cual sea LANG:
+        # traducido, no se reconocería.
+        if err="$(LC_ALL=C git push -q "$REMOTO" "$(git -C "$WT" rev-parse HEAD):refs/heads/$PRINCIPAL" 2>&1)"; then
+            echo "PUBLICADO $(git -C "$WT" rev-parse --short HEAD) en $ARRIBA"
+            quitar
+            return 0
+        fi
+        if ! grep -qE 'rejected|fetch first|non-fast-forward' <<<"$err"; then
+            echo "$err" >&2
+            falla "el push falló por algo que no es una carrera"
+        fi
+        traer
+        if [ "$reserva" = 1 ]; then
+            git -C "$WT" reset -q --hard "$ARRIBA"
+            echo "RECHAZADO: alguien publicó en $PRINCIPAL antes; el worktree ya está en lo nuevo: recalcula ahí y reintenta"
+            exit 3
+        fi
+        if ! git -C "$WT" rebase -q --rebase-merges "$ARRIBA" >/dev/null 2>&1; then
+            local choques
+            choques="$(git -C "$WT" diff --name-only --diff-filter=U | tr '\n' ' ')"
+            git -C "$WT" rebase --abort >/dev/null 2>&1 || true
+            echo "CONFLICTO con lo que alguien publicó en $PRINCIPAL: $choques"
+            echo "El commit sigue en $WT, sin publicar. Resuélvelo o 'comanda-main descartar'."
+            exit 4
+        fi
+    done
+    falla "no se pudo publicar tras tres intentos"
+}
+
+case "${1:-}" in
+    ruta)      cmd_ruta ;;
+    publicar)  shift; cmd_publicar "$@" ;;
+    descartar) cmd_descartar ;;
+    *) sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

@@ -1,0 +1,12 @@
+{
+  "name": "comanda",
+  "description": "El plugin Comanda, servido desde su propio repo.",
+  "owner": { "name": "Gabriel Covarrubias" },
+  "plugins": [
+    {
+      "name": "comanda",
+      "description": "Buzón, triage, sprints cortos y arranque en frío, con el estado en el repo.",
+      "source": "./"
+    }
+  ]
+}

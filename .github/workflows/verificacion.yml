@@ -1,0 +1,29 @@
+# La verificación del plugin, menos `claude plugin validate .`
+# (pediría instalar y autenticar el CLI): en cada push y PR, para que lo que
+# se funde a main no rompa comanda-main.
+name: Verificación
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verificacion:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Sintaxis de comanda-main
+        run: bash -n bin/comanda-main
+
+      - name: Pruebas de comanda-main
+        run: bash pruebas/comanda-main.sh
+
+      - name: Nada público cita lo privado
+        run: bash pruebas/sin-citas.sh
+
+      - name: shellcheck
+        run: shellcheck bin/comanda-main pruebas/comanda-main.sh pruebas/sin-citas.sh
