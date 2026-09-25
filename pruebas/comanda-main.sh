@@ -166,5 +166,27 @@ grep -q "tres intentos" <<<"$err" && mal "sin --reserva dio tres vueltas" || bie
 en prot "$CM" descartar >/dev/null
 [ -e "$W" ] && mal "descartar no borró el worktree" || bien "descartar deja limpio"
 
+echo "15) un remoto al que no se llega"
+git clone -q remoto.git caido 2>/dev/null
+git -C caido remote set-url origin "$T/no-existe.git"
+err="$(en caido "$CM" ruta 2>&1 >/dev/null)"; igual "$?" 1 "ruta sale con 1, no con el 128 de git"
+grep -q "no se pudo alcanzar el remoto 'origin'" <<<"$err" && bien "y dice que no se llegó al remoto" \
+    || mal "no dice que no se llegó al remoto: «$err»"
+grep -q "no-existe.git" <<<"$err" && bien "con la URL" || mal "sin la URL: «$err»"
+[ -e "$T/caido/.comanda-main" ] && mal "quedó un .comanda-main" || bien "no deja worktree de paso"
+
+echo "16) un .comanda-main podado a mano (sin su .git)"
+W="$(ruta gabriel)" || exit 1; echo p > "$W/podado.txt"
+rm "$W/.git"; git -C gabriel worktree prune
+err="$(en gabriel "$CM" ruta 2>&1 >/dev/null)"; igual "$?" 1 "ruta sale con 1, no «already exists»"
+grep -q "comanda-main descartar" <<<"$err" && bien "y manda a descartar" || mal "no manda a descartar: «$err»"
+[ -e "$W/podado.txt" ] && bien "lo que había dentro sigue ahí" || mal "ruta borró lo que había dentro"
+en gabriel "$CM" descartar >/dev/null; igual "$?" 0 "descartar sale con 0"
+[ -e "$W" ] && mal "descartar no borró el directorio" || bien "y el directorio ya no existe"
+W="$(ruta gabriel)" || exit 1; en gabriel "$CM" descartar >/dev/null
+mkdir "$W"
+en gabriel "$CM" ruta >/dev/null 2>&1; igual "$?" 0 "uno vacío no estorba: ruta sale con 0"
+en gabriel "$CM" descartar >/dev/null
+
 echo
 if [ "$FALLAS" -eq 0 ]; then echo "Todo pasa."; else echo "$FALLAS fallas."; exit 1; fi

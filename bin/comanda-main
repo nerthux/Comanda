@@ -19,7 +19,8 @@
 #
 # Si el remoto rechaza el push sin que la principal haya avanzado (un hook,
 # una principal protegida), no fue una carrera: sale con 1, dice por qué con
-# el texto de git y no descarta nada.
+# el texto de git y no descarta nada. Un remoto al que no se llega y un
+# .comanda-main/ podado a mano (sin su .git) también salen con 1 y dicen qué hacer.
 #
 # El cuerpo del commit va en el mismo <mensaje>, tras una línea en blanco; un
 # argumento de más es error, no se ignora.
@@ -57,8 +58,8 @@ ARRIBA="$REMOTO/$PRINCIPAL"
 # remoto con URL relativa (../repo.git) sólo apunta bien desde ahí. Las refs y
 # los objetos son comunes, así que lo traído se ve en los dos.
 traer() {
-    git fetch -q "$REMOTO" "$PRINCIPAL" && return 0
-    local rc=$? c=0
+    local err c=0
+    err="$(git fetch -q "$REMOTO" "$PRINCIPAL" 2>&1)" && return 0
     # Un proyecto desde cero no tiene todavía la principal en el remoto.
     # Se distingue por el código de ls-remote, no por el texto de git, que
     # cambia con LANG.
@@ -66,7 +67,11 @@ traer() {
     [ "$c" != 2 ] || falla "el remoto '$REMOTO' no tiene la rama '$PRINCIPAL';" \
         "créala primero (un commit y 'git push $REMOTO $PRINCIPAL' desde un checkout)," \
         "o di cuál es con COMANDA_PRINCIPAL"
-    exit "$rc"
+    # Cualquier otro fallo del fetch es que no se llegó al remoto: la URL, la
+    # red o el acceso. Con código propio (1), no con el 128 de git.
+    echo "$err" >&2
+    falla "no se pudo alcanzar el remoto '$REMOTO' ($(git remote get-url "$REMOTO")):" \
+        "revisa la URL, la red o el acceso; el texto de arriba es de git"
 }
 
 pendiente() {
@@ -78,6 +83,14 @@ pendiente() {
 cmd_ruta() {
     traer
     if [ ! -e "$WT/.git" ]; then
+        # Un .comanda-main/ con archivos pero sin .git es un worktree podado a
+        # mano: git no puede decir si tiene algo sin publicar, y 'worktree add'
+        # sólo diría «already exists». Uno vacío no estorba: 'worktree add' lo acepta.
+        if [ -e "$WT" ] && [ -n "$(ls -A "$WT" 2>/dev/null)" ]; then
+            falla "hay un $WT sin su .git: es un worktree de paso podado a mano y git" \
+                "no puede decir si tiene algo sin publicar. Mira qué hay dentro y tíralo" \
+                "con 'comanda-main descartar'; luego vuelve a 'comanda-main ruta'"
+        fi
         git worktree prune
         git worktree add -q --detach "$WT" "$ARRIBA"
     else
@@ -178,5 +191,5 @@ case "${1:-}" in
     ruta)      cmd_ruta ;;
     publicar)  shift; cmd_publicar "$@" ;;
     descartar) cmd_descartar ;;
-    *) sed -n '2,31p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+    *) sed -n '2,32p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
