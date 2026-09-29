@@ -91,8 +91,14 @@ medio camino.
    preguntas abiertas del tema**: lee las filas de `ROADMAP.md` §5 que toquen
    al tema y házselas a quien abre con AskUserQuestion, agrupadas, **antes de
    cortar**:
-   - **contestada** → entra a `W/docs/DECISIONES.md` con el siguiente
-     `DEC-NNN`, la fecha y quién; el archivo del sprint y el plan de fase la
+   - **contestada** → pasa el mismo filtro que en `cerrar`: entra lo que
+     decide —lo que decidió o confirmó quien contesta, o lo que ata fuera del
+     sprint—; lo que sólo fija un detalle de cómo quedará el código, o anota
+     un hecho, no sube: va al archivo del sprint. Lo que entra va a
+     `W/docs/DECISIONES.md` con el siguiente `DEC-NNN`, la fecha y quién; si
+     revierte o precisa una fila vigente, **la tacha** —«Revertida el <fecha>
+     por DEC-NNN» o «Precisada el <fecha> por DEC-NNN»— y la nueva se escribe
+     entera, para que se lea sola. El archivo del sprint y el plan de fase la
      **citan** por id; la fila **se borra** de §5. Va en el mismo commit de la
      reserva, y el push la protege igual;
    - **sin contestar** —la debe el cliente y no ha llegado— → la tarea que
