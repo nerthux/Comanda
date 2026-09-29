@@ -73,7 +73,9 @@ migraciones, la verificación y las reglas del proyecto), el archivo del sprint
 (la cabecera con sus reservas, la tabla de tareas, el detalle de la tarea que
 toca, «Decisiones del sprint», «Lo que te toca a ti» y «De paso») y **el plan
 de fase que cite su cabecera**, si lo hay. De `docs/DECISIONES.md` lee sólo las
-decisiones que el sprint cita por id: **lo que está ahí no se re-pregunta**.
+decisiones que el sprint cita por id; una que no esté en la tabla se busca en
+`docs/archivo/DECISIONES_podadas_*.md`, donde queda lo podado, que sigue
+decidido. **Lo que está en uno u otro no se re-pregunta.**
 
 Si algo del árbol discrepa con lo anotado —la rama no es la del sprint, hay
 cambios sin commitear, la migración que el sprint dice entregada no está en la

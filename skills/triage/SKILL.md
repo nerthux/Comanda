@@ -121,7 +121,8 @@ Reglas al repartir:
   arregla*. Si una entrada pide medición, se anota la pregunta en `TODO.md` y se
   acabó; medir es trabajo de sprint.
 - **Respeta las decisiones ya tomadas** — están todas en
-  `docs/DECISIONES.md`, con su id. Si una entrada contradice una, dilo y cita
+  `docs/DECISIONES.md` y, las podadas, en
+  `docs/archivo/DECISIONES_podadas_*.md`, con su id. Si una entrada contradice una, dilo y cita
   el id: puede ser que el cliente cambió de opinión, y eso se pregunta; si se
   revierte, la fila del registro se tacha con la fecha y la nueva la sustituye.
 - **La puerta "ya" no cuenta contra el techo de tareas**, porque entra "de
