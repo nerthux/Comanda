@@ -83,6 +83,10 @@ Hay dos caminos, y los dos son una receta para que la siga el agente:
 - **Arrancar**: no hay más que lo que se le propuso al cliente →
   `plantillas/ARRANCAR.md`, que copia el esqueleto `plantillas/proyecto/`.
 
+Y una tercera para después: si el registro de decisiones ya pesa —detalles
+de código, hechos, cadenas de «precisa»—, `plantillas/PODAR.md` muda lo que
+no hace falta leer en cada sesión, sin perder un id.
+
 Las plantillas están en este repo y en la copia instalada,
 `~/.claude/plugins/cache/comanda/comanda/<versión>/`. El agente las copia de
 ahí, no de memoria. Si ningún proyecto tuyo tiene el plugin todavía, clona
@@ -200,8 +204,8 @@ verdad, en una rama aparte, antes de darlo por bueno.
 .github/          el CI: la verificación en cada push y PR
 skills/           los cinco comandos
 bin/comanda-main  escribir en la principal sin tocar el checkout de nadie
-plantillas/       COMANDA.md (la configuración), ADOPTAR.md, ARRANCAR.md y
-                  proyecto/ (el esqueleto que copia ARRANCAR.md)
+plantillas/       COMANDA.md (la configuración), ADOPTAR.md, ARRANCAR.md,
+                  PODAR.md y proyecto/ (el esqueleto que copia ARRANCAR.md)
 pruebas/          las pruebas de comanda-main y la del repo de juguete
 CHANGELOG.md      lo que cambió en cada versión
 LICENSE           MIT
