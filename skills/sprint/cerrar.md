@@ -63,8 +63,8 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
      el archivo del sprint;
    - **hecho** —un borrado, una reparación, una carga— → a la fila del
      sprint en `CHANGELOG.md`, la del paso 3, que sigue sin publicar;
-   - **lección** —una corrección que se repite— → a «Reglas del proyecto»
-     de `docs/COMANDA.md`, sólo si quien cierra lo aprueba.
+   - **lección** —una corrección que se repite— → a «Las lecciones», abajo,
+     que la junta con lo demás que se repitió y la propone como regla.
 
    **Antes de escribir nada, muéstrale a quien cierra la lista:** cada
    `D-n` en una línea, con quién la tomó, el destino que propones y la
@@ -81,7 +81,24 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
    `DEC-NNN` que subieron. En el archivo del sprint, junto a cada `D-n`, su
    destino: `→ DEC-NNN`, `→ no subió: detalle`, `→ no subió: hecho, en el
    CHANGELOG`, `→ no subió: lección, en «Reglas del proyecto»` o `→ no
-   subió: lección, no aprobada`.
+   subió: lección, no aprobada` —las dos últimas, cuando quien cierra
+   conteste en «Las lecciones»—.
+
+   **Las lecciones.** Una corrección que se repite es una regla, no una
+   decisión. Busca en `W/docs/sprints/<tema>.md` lo que se corrigió más de
+   una vez: los renglones de «De paso», la bitácora si la tiene y las `D-n`
+   que la lista de arriba mandó a «lección». Cuenta si el mismo arreglo a
+   mano aparece dos veces o más, o si algo escrito dice que ya había pasado
+   antes. Para cada una, propón el renglón para «Reglas del proyecto» de
+   `docs/COMANDA.md`, como los demás de esa sección, con su porqué en una
+   frase y el sprint del que salió (`<tema>`).
+
+   **Pregunta siempre**, con AskUserQuestion: si hay candidatas, cada una
+   con su renglón, para que quien cierra marque las que entran; si no hay,
+   si se repitió alguna corrección en el sprint, y lo que conteste se
+   propone como renglón y se confirma igual. Sólo lo aprobado se agrega a
+   «Reglas del proyecto» de `W/docs/COMANDA.md`; lo demás no se escribe en
+   otro lado. Si no hubo ninguna, dilo y sigue.
 
 7. **El plan de fase, si el sprint salió de uno:** ¿le quedan sprints? Anota
    el estado y deja el tramo abierto diciendo cuántos faltan. ¿Fue el último?
@@ -158,5 +175,6 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
 ## Al terminar
 
 Qué se cerró, qué se difirió a §4 y con qué fecha, qué regresó al backlog y por
-qué, cuántas `D-n` subieron —con su `DEC-NNN`— y cuántas no, por destino, y
-las dos cifras del ROADMAP (antes y después).
+qué, cuántas `D-n` subieron —con su `DEC-NNN`— y cuántas no, por destino,
+qué lecciones entraron a «Reglas del proyecto» —con su renglón— y cuántas se
+propusieron y no, y las dos cifras del ROADMAP (antes y después).
