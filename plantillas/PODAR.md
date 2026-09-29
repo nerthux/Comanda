@@ -12,7 +12,10 @@ agente con una persona delante: el agente propone y la persona aprueba
    aprobada, el archivo de podadas y el texto del párrafo del paso 7; el
    registro lo edita quien cierre, en la principal, con esa lista. Anótalo
    en «Lo que te toca a ti». Sin sprint, todo va en la rama de lo de un
-   commit, y se funde como ella.
+   commit, y se funde como ella; como no hay archivo del sprint, la tabla
+   del paso 2, la aprobación y las medidas van en el cuerpo del commit, no
+   en el archivo de podadas: ahí sólo va lo mudado, para que un id se
+   encuentre en un solo lugar.
 2. **Medir antes.** Cuenta las filas de `docs/DECISIONES.md` y arma en el
    archivo del sprint una tabla, una fila por decisión: id, quién, propuesta
    (`queda` o `muda`), motivo y una nota. Compara con `diff` los ids y el
