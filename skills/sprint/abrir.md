@@ -87,8 +87,10 @@ medio camino.
    en el plan.
 
 6. **Contrasta con `docs/DECISIONES.md`** antes de escribir una tarea: ahí está
-   todo lo decidido, con su id, y no se re-pregunta. **Y aquí se contestan las
-   preguntas abiertas del tema**: lee las filas de `ROADMAP.md` §5 que toquen
+   todo lo decidido, con su id, y no se re-pregunta. Un id que el plan, §5 o
+   el buzón citen y no esté en la tabla se busca en
+   `docs/archivo/DECISIONES_podadas_*.md`: lo podado sigue decidido. **Y
+   aquí se contestan las preguntas abiertas del tema**: lee las filas de `ROADMAP.md` §5 que toquen
    al tema y házselas a quien abre con AskUserQuestion, agrupadas, **antes de
    cortar**:
    - **contestada** → pasa el mismo filtro que en `cerrar`: entra lo que
