@@ -94,17 +94,25 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
     si el PR no la borró). **El worktree del sprint es la ruta de su cabecera
     `**Worktree:**`**, tal cual —en `W/docs/archivo/`, tras el paso 8—, no
     una que construyas: un sprint abierto con 0.2.x dice
-    `../<carpeta>-<tema>` y cierra ahí, aunque hoy la ruta sea otra. Si esa
-    ruta sale en `git worktree list` —está en esta máquina— y está limpio, quítalo
-    desde la raíz, `<raíz>` la primera línea de
+    `../<carpeta>-<tema>` y cierra ahí, aunque hoy la ruta sea otra.
+
+    **Si `pwd` está dentro de esa ruta, no quites el worktree ni borres la
+    rama local:** la sesión no puede salir de la carpeta donde se abrió —un
+    `cd` a la raíz se regresa solo—, tras el `remove` cada comando falla con
+    `getcwd`, y la rama no se borra mientras el worktree la tenga tomada.
+    Dale a quien cierra los comandos de abajo, con las rutas ya puestas, para
+    que los corra desde la raíz —en otra terminal o en una sesión abierta
+    ahí—, y pasa a «Al terminar».
+
+    Si no, y esa ruta sale en `git worktree list` —está en esta máquina— y
+    está limpio, quítalo desde la raíz, `<raíz>` la primera línea de
     `git worktree list --porcelain`:
 
     ```bash
     git -C <raíz> worktree remove <la ruta de **Worktree:**>
     ```
 
-    Desde la raíz porque la ruta vieja es relativa al checkout principal, y
-    porque así no importa estar parado dentro del worktree que se quita.
+    Desde la raíz porque la ruta vieja es relativa al checkout principal.
     Después, la rama local, sólo si ya está entera en la principal:
 
     ```bash
