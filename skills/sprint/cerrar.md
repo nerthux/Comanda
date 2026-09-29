@@ -53,9 +53,35 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
    (dry-runs, conteos) **se quedan en el archivo del sprint**, no en el
    ROADMAP ni en el plan.
 
-6. **`docs/DECISIONES.md`:** las «Decisiones del sprint» (`D1`, `D2`…) entran
-   con su `DEC-NNN`, y en el archivo del sprint se anota a cuál pasó cada una.
-   Una que se revirtió se tacha con la fecha y el id de la que la sustituye.
+6. **`docs/DECISIONES.md`: sube sólo lo que decide.** Cada «Decisión del
+   sprint» (`D1`, `D2`…) pasa por un filtro. **Sube** lo que decidió o
+   confirmó una persona, o lo que ata fuera del sprint: lo que otro sprint,
+   un plan o el cliente podría contradecir sin enterarse, como una
+   convención o un contrato entre frentes. Lo demás no sube, pero tiene
+   destino, para que no se pierda ni se vuelva a decidir:
+   - **detalle** —cómo quedó el código, un nombre, un orden— → se queda en
+     el archivo del sprint;
+   - **hecho** —un borrado, una reparación, una carga— → a la fila del
+     sprint en `CHANGELOG.md`, la del paso 3, que sigue sin publicar;
+   - **lección** —una corrección que se repite— → a «Reglas del proyecto»
+     de `docs/COMANDA.md`, sólo si quien cierra lo aprueba.
+
+   **Antes de escribir nada, muéstrale a quien cierra la lista:** cada
+   `D-n` en una línea, con quién la tomó, el destino que propones y la
+   razón en media frase, y pregúntale con AskUserQuestion si va así. Lo que
+   corrija, manda. Aprobar la lista no confirma las decisiones del agente:
+   una marcada «agente, corregible» sube sólo si ata fuera del sprint o si
+   quien cierra dice que la hace suya. Si no hay `D-n`, dilo y sigue.
+
+   Lo que sube recibe el siguiente `DEC-NNN`, con la fecha de hoy y quién;
+   su «Porqué» cita la `D-n` con su tema —`<tema> D3`, nunca «D3» a secas—.
+   Si revierte o precisa una fila vigente, **la tacha** —«Revertida el
+   <fecha> por DEC-NNN» o «Precisada el <fecha> por DEC-NNN»— y la nueva se
+   escribe entera, para que se lea sola. La fila del CHANGELOG cita los
+   `DEC-NNN` que subieron. En el archivo del sprint, junto a cada `D-n`, su
+   destino: `→ DEC-NNN`, `→ no subió: detalle`, `→ no subió: hecho, en el
+   CHANGELOG`, `→ no subió: lección, en «Reglas del proyecto»` o `→ no
+   subió: lección, no aprobada`.
 
 7. **El plan de fase, si el sprint salió de uno:** ¿le quedan sprints? Anota
    el estado y deja el tramo abierto diciendo cuántos faltan. ¿Fue el último?
@@ -132,5 +158,5 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
 ## Al terminar
 
 Qué se cerró, qué se difirió a §4 y con qué fecha, qué regresó al backlog y por
-qué, qué decisiones recibieron número, y las dos cifras del ROADMAP (antes y
-después).
+qué, cuántas `D-n` subieron —con su `DEC-NNN`— y cuántas no, por destino, y
+las dos cifras del ROADMAP (antes y después).
