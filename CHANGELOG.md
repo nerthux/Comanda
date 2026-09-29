@@ -4,6 +4,25 @@ Lo que cambió en cada versión del plugin. **Lo más nuevo va arriba.** El
 formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y
 las versiones, [SemVer](https://semver.org/lang/es/).
 
+## [0.6.0] — 2026-09-29
+
+### Agregado
+
+- **`plantillas/PODAR.md`: la receta para podar un registro de decisiones
+  que ya existe.** Aplica a cada fila el filtro de qué entra; lo que no
+  pasa —y lo ya tachado— se muda a
+  `docs/archivo/DECISIONES_podadas_<fecha>.md` con su id y su texto, y el
+  registro deja un párrafo con el rango y el enlace. Una cadena de
+  «precisa» se funde en una sola fila. La corre el agente con una persona
+  delante: propone la lista y la persona la aprueba antes de mover nada.
+  No se borra ni se reusa ningún id.
+
+### Cambiado
+
+- **`/comanda:next`, `/comanda:sprint abrir` y `/comanda:triage` buscan en
+  el archivo de podadas un id que no está en el registro**: lo podado
+  sigue decidido y no se vuelve a preguntar.
+
 ## [0.5.0] — 2026-09-28
 
 ### Cambiado
