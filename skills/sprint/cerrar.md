@@ -53,9 +53,52 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
    (dry-runs, conteos) **se quedan en el archivo del sprint**, no en el
    ROADMAP ni en el plan.
 
-6. **`docs/DECISIONES.md`:** las «Decisiones del sprint» (`D1`, `D2`…) entran
-   con su `DEC-NNN`, y en el archivo del sprint se anota a cuál pasó cada una.
-   Una que se revirtió se tacha con la fecha y el id de la que la sustituye.
+6. **`docs/DECISIONES.md`: sube sólo lo que decide.** Cada «Decisión del
+   sprint» (`D1`, `D2`…) pasa por un filtro. **Sube** lo que decidió o
+   confirmó una persona, o lo que ata fuera del sprint: lo que otro sprint,
+   un plan o el cliente podría contradecir sin enterarse, como una
+   convención o un contrato entre frentes. Lo demás no sube, pero tiene
+   destino, para que no se pierda ni se vuelva a decidir:
+   - **detalle** —cómo quedó el código, un nombre, un orden— → se queda en
+     el archivo del sprint;
+   - **hecho** —un borrado, una reparación, una carga— → a la fila del
+     sprint en `CHANGELOG.md`, la del paso 3, que sigue sin publicar;
+   - **lección** —una corrección que se repite— → a «Las lecciones», abajo,
+     que la junta con lo demás que se repitió y la propone como regla.
+
+   **Antes de escribir nada, muéstrale a quien cierra la lista:** cada
+   `D-n` en una línea, con quién la tomó, el destino que propones y la
+   razón en media frase, y pregúntale con AskUserQuestion si va así. Lo que
+   corrija, manda. Aprobar la lista no confirma las decisiones del agente:
+   una marcada «agente, corregible» sube sólo si ata fuera del sprint o si
+   quien cierra dice que la hace suya. Si no hay `D-n`, dilo y sigue.
+
+   Lo que sube recibe el siguiente `DEC-NNN`, con la fecha de hoy y quién;
+   su «Porqué» cita la `D-n` con su tema —`<tema> D3`, nunca «D3» a secas—.
+   Si revierte o precisa una fila vigente, **la tacha** —«Revertida el
+   <fecha> por DEC-NNN» o «Precisada el <fecha> por DEC-NNN»— y la nueva se
+   escribe entera, para que se lea sola. La fila del CHANGELOG cita los
+   `DEC-NNN` que subieron. En el archivo del sprint, junto a cada `D-n`, su
+   destino: `→ DEC-NNN`, `→ no subió: detalle`, `→ no subió: hecho, en el
+   CHANGELOG`, `→ no subió: lección, en «Reglas del proyecto»` o `→ no
+   subió: lección, no aprobada` —las dos últimas, cuando quien cierra
+   conteste en «Las lecciones»—.
+
+   **Las lecciones.** Una corrección que se repite es una regla, no una
+   decisión. Busca en `W/docs/sprints/<tema>.md` lo que se corrigió más de
+   una vez: los renglones de «De paso», la bitácora si la tiene y las `D-n`
+   que la lista de arriba mandó a «lección». Cuenta si el mismo arreglo a
+   mano aparece dos veces o más, o si algo escrito dice que ya había pasado
+   antes. Para cada una, propón el renglón para «Reglas del proyecto» de
+   `docs/COMANDA.md`, como los demás de esa sección, con su porqué en una
+   frase y el sprint del que salió (`<tema>`).
+
+   **Pregunta siempre**, con AskUserQuestion: si hay candidatas, cada una
+   con su renglón, para que quien cierra marque las que entran; si no hay,
+   si se repitió alguna corrección en el sprint, y lo que conteste se
+   propone como renglón y se confirma igual. Sólo lo aprobado se agrega a
+   «Reglas del proyecto» de `W/docs/COMANDA.md`; lo demás no se escribe en
+   otro lado. Si no hubo ninguna, dilo y sigue.
 
 7. **El plan de fase, si el sprint salió de uno:** ¿le quedan sprints? Anota
    el estado y deja el tramo abierto diciendo cuántos faltan. ¿Fue el último?
@@ -94,17 +137,25 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
     si el PR no la borró). **El worktree del sprint es la ruta de su cabecera
     `**Worktree:**`**, tal cual —en `W/docs/archivo/`, tras el paso 8—, no
     una que construyas: un sprint abierto con 0.2.x dice
-    `../<carpeta>-<tema>` y cierra ahí, aunque hoy la ruta sea otra. Si esa
-    ruta sale en `git worktree list` —está en esta máquina— y está limpio, quítalo
-    desde la raíz, `<raíz>` la primera línea de
+    `../<carpeta>-<tema>` y cierra ahí, aunque hoy la ruta sea otra.
+
+    **Si `pwd` está dentro de esa ruta, no quites el worktree ni borres la
+    rama local:** la sesión no puede salir de la carpeta donde se abrió —un
+    `cd` a la raíz se regresa solo—, tras el `remove` cada comando falla con
+    `getcwd`, y la rama no se borra mientras el worktree la tenga tomada.
+    Dale a quien cierra los comandos de abajo, con las rutas ya puestas, para
+    que los corra desde la raíz —en otra terminal o en una sesión abierta
+    ahí—, y pasa a «Al terminar».
+
+    Si no, y esa ruta sale en `git worktree list` —está en esta máquina— y
+    está limpio, quítalo desde la raíz, `<raíz>` la primera línea de
     `git worktree list --porcelain`:
 
     ```bash
     git -C <raíz> worktree remove <la ruta de **Worktree:**>
     ```
 
-    Desde la raíz porque la ruta vieja es relativa al checkout principal, y
-    porque así no importa estar parado dentro del worktree que se quita.
+    Desde la raíz porque la ruta vieja es relativa al checkout principal.
     Después, la rama local, sólo si ya está entera en la principal:
 
     ```bash
@@ -124,5 +175,6 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
 ## Al terminar
 
 Qué se cerró, qué se difirió a §4 y con qué fecha, qué regresó al backlog y por
-qué, qué decisiones recibieron número, y las dos cifras del ROADMAP (antes y
-después).
+qué, cuántas `D-n` subieron —con su `DEC-NNN`— y cuántas no, por destino,
+qué lecciones entraron a «Reglas del proyecto» —con su renglón— y cuántas se
+propusieron y no, y las dos cifras del ROADMAP (antes y después).

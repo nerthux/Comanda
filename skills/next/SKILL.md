@@ -138,12 +138,28 @@ Cinco líneas, no más, y luego el plan:
 
 La tarea no está lista hasta que esté **escrita de vuelta**, en este orden:
 el archivo del sprint (el estado de la tarea, y en «Decisiones del sprint» lo
-que se decidió, como `D1`, `D2`…), las notas de migraciones (si hubo
+que se decidió, como `D1`, `D2`…, abajo), las notas de migraciones (si hubo
 migración) y el archivo de recorridos (si cambió una pantalla). **El ROADMAP,
 `DECISIONES.md` y el CHANGELOG no se tocan en la rama del sprint**: los pone al
 día quien cierre. Un commit por tarea, en español y con el porqué en el
 cuerpo, **y se sube la rama** (`git push origin <tema>`): así el otro ve en qué
 vas.
+
+**Cada `D-n` dice lo que `cerrar` necesita para filtrarla**, que no adivina
+lo que no está escrito. Una por renglón, con esta forma:
+
+```markdown
+- **D3 · <quién> · <ata o no ata fuera del sprint> · <la decisión>**.
+  Porqué: …
+```
+
+«Quién» es la persona que la tomó o la confirmó en esta sesión, o «agente,
+corregible» si fue el agente. Ata fuera del sprint lo que otro sprint, un
+plan o el cliente podría contradecir sin enterarse, como una convención o un
+contrato entre frentes; si no, «no ata fuera del sprint». No se numeran como
+`DEC`: pasan por el filtro de `cerrar`, que sube lo que decide y manda lo
+demás a su destino. Dentro del archivo del sprint se citan «D3»; fuera —el
+cuerpo de un commit, el buzón, otro sprint— `<tema> D3`, nunca «D3» a secas.
 
 **El porqué no se inventa.** El del cuerpo del commit y el de cada `D1`,
 `D2`… sale de algo escrito —el archivo del sprint, el plan, una decisión, el
