@@ -4,6 +4,33 @@ Lo que cambió en cada versión del plugin. **Lo más nuevo va arriba.** El
 formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y
 las versiones, [SemVer](https://semver.org/lang/es/).
 
+## [0.5.0] — 2026-09-28
+
+### Cambiado
+
+- **`/comanda:sprint cerrar` sube al registro sólo lo que decide.** Cada
+  decisión del sprint pasa por un filtro: sube lo que decidió o confirmó
+  una persona, o lo que ata fuera del sprint; el detalle se queda en el
+  archivo del sprint y un hecho va a la fila del CHANGELOG. Quien cierra ve
+  la lista con el destino propuesto de cada una y la corrige antes de que se
+  escriba nada; aprobar la lista no confirma las decisiones del agente. Una
+  decisión que precisa a otra la tacha, y el archivo del sprint anota el
+  destino de cada una.
+- **`cerrar` propone como regla lo que se corrigió más de una vez** en el
+  sprint, con su renglón para «Reglas del proyecto»; entra sólo si quien
+  cierra lo aprueba.
+- **`/comanda:next` y `/comanda:sprint abrir` escriben cada decisión de
+  sprint con quién la tomó y si ata fuera del sprint**, y fuera de su
+  archivo la citan con su tema (`<tema> D3`).
+- **La plantilla del registro dice qué entra**, que precisar tacha igual
+  que revertir, y cómo se cita una decisión de sprint.
+
+### Corregido
+
+- **`cerrar` no quita el worktree en el que está parada la sesión**: la
+  sesión no puede salir de esa carpeta y cada comando fallaría después. Deja
+  los comandos, con las rutas puestas, para correrlos desde la raíz.
+
 ## [0.4.2] — 2026-09-25
 
 ### Corregido
