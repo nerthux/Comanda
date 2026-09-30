@@ -59,6 +59,30 @@ ruta del checkout principal y `<tema>` el del sprint. O `nada`.
 contenedor de pruebas se llama `<proyecto>-<tema>`, con
 `VARIABLE=<proyecto>-<tema>`»>. O `ninguno`.
 
+## Repos hijos
+
+O `no aplica`. Un repo hijo es código que vive en su propio repo porque otro
+dicta su forma (Odoo.sh, un GitHub del cliente, una CI que despliega al
+push): va clonado en su carpeta, aparte e ignorado, **no como submódulo**, y
+en cada sprint su worktree va dentro del del sprint, en la rama `<tema>`.
+Un renglón por hijo, con esta forma, que los comandos leen tal cual:
+
+- **carpeta**, relativa a la raíz, con su barra;
+- **clon**: de dónde se clona;
+- **base**: la rama de la que sale y a la que vuelve la del sprint;
+- **se monta**: `siempre` o `si el sprint lo cambia`;
+- **funde**: `el agente al cerrar`, `una persona, por PR` o `una persona, a
+  mano`, con `y eso despliega` al final cuando fundir despliega.
+
+```markdown
+- **`odoo/`** · clon: `git@github.com:<cliente>/odoo.git` · base: `staging`
+  · se monta: siempre · funde: una persona, por PR
+```
+
+Lo que no cabe en el renglón se queda donde está: las dependencias y el
+`.env` del hijo, en «Worktree»; lo propio del proyecto, en «Reglas del
+proyecto».
+
 ## Techos
 
 - **Tareas por sprint:** 5
@@ -128,14 +152,3 @@ su decisión si la tiene. Los comandos las respetan como si estuvieran escritas
 en ellos.
 
 - <regla>
-- <si hay repo hijo, en prosa; si no, quita el renglón:
-  «`odoo/` es un repo hijo: el de Odoo.sh del cliente, clonado de `<url>`
-  en `<raíz>/odoo`, aparte e ignorado, no submódulo. En cada sprint su
-  worktree va dentro del del sprint, en la rama `<tema>`, con ruta absoluta,
-  sacada de `<rama base, p. ej. staging>` y sin rastrearla: `git -C
-  <raíz>/odoo fetch origin` y `git -C <raíz>/odoo worktree add --no-track
-  <raíz>/.worktrees/<tema>/odoo -b <tema> origin/<rama base>`; el primer push,
-  `push -u origin <tema>`. Fundir es <p. ej. un PR de
-  `<tema>` contra `staging` en el repo del cliente, que funde una persona al
-  cerrar el sprint>. Los comandos de Comanda no lo conocen: lo que haga
-  falta, el agente lo lee aquí.»>

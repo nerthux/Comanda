@@ -29,6 +29,15 @@ medio camino.
    `git worktree list --porcelain` → `<raíz>`, la ruta de su primera línea
    (arriba, en `SKILL.md`): la necesitan la cabecera y el worktree.
 
+   **Si `<raíz>` no es la del proyecto, para.** Lo es si tiene
+   `docs/COMANDA.md` y no es la carpeta de un repo hijo: desde dentro de un
+   hijo, esa primera línea es la del hijo. Mira el repo de arriba,
+   `git -C <raíz>/.. worktree list --porcelain` → `<padre>` (si falla, no
+   hay repo arriba y no es hijo); si `<padre>/docs/COMANDA.md` tiene en
+   «Repos hijos» un renglón cuya carpeta, bajo `<padre>`, es `<raíz>`, es
+   un hijo. En los dos casos, di que la sesión se abre en la raíz del
+   proyecto y termina.
+
 2. **Si el buzón (`W/docs/BUZON.md`) tiene entradas sin triar, para y di que
    primero va `/comanda:triage`.** Abrir un sprint sin vaciar el buzón es cómo
    se llega a tener cuatro planes.
@@ -124,7 +133,8 @@ medio camino.
    la cabecera de arriba, con `**Worktree:**` escrito entero
    (`<raíz>/.worktrees/<tema>`, absoluto); el tema; **el plan del que sale y qué trozo se
    lleva** (o "sin plan" y por qué); la tabla de tareas; cuántas migraciones se
-   esperan; «Decisiones del sprint», vacía; una sección **"De paso"** vacía; y
+   esperan; qué repos hijos cambia y cuáles sólo monta (paso 10), si
+   «Repos hijos» no dice `no aplica`; «Decisiones del sprint», vacía; una sección **"De paso"** vacía; y
    **"Lo que te toca a ti"** —aplicar, avisar, cargar, desplegar, y la última
    corrida de recorridos si el sprint toca pantallas—. Esa sección es la mitad
    del valor del archivo, y **se escribe para quien no estuvo en la sesión**:
@@ -145,7 +155,8 @@ medio camino.
     sacado de lo que acabas de publicar. Primero que git no lo vea desde la
     raíz: si no existe `<raíz>/.worktrees/.gitignore`, créalo con Write con
     una sola línea, `*`. No en `.git/info/exclude`: Claude Code niega
-    escribir dentro de `.git/`, con Edit y con Bash. Luego:
+    escribir dentro de `.git/`, con Edit y con Bash. Luego, con el remoto y
+    la principal de «Ramas»:
 
     ```bash
     git fetch origin
@@ -158,9 +169,37 @@ medio camino.
     **Con la ruta absoluta**, nunca `.worktrees/<tema>` a secas: relativa,
     corrida desde dentro de otro sprint, queda anidada en el suyo.
 
-    Corre ahí, desde el worktree nuevo, los comandos de «Worktree» de
-    `docs/COMANDA.md` (`<principal>` es `<raíz>`, `<tema>` el del sprint). Y
-    súbela desde la raíz, no desde el worktree —un remoto con URL relativa
+    **Los repos hijos**, si «Repos hijos» no dice `no aplica`, antes que los
+    comandos de «Worktree», que suelen instalar sus dependencias. Por cada
+    renglón, el clon es `<raíz>/<carpeta>`: si no existe, `git clone <clon>
+    <raíz>/<carpeta>`; si existe y `git -C <raíz>/<carpeta> rev-parse
+    --show-toplevel` no da esa misma ruta, no es un repo aparte: para y
+    dilo. Con su remoto `origin` y la `<base>` del renglón, `git -C
+    <raíz>/<carpeta> fetch origin`, y luego:
+
+    - **El sprint lo cambia** —alguna tarea nombra su carpeta en «Dónde»—:
+      su worktree va en la rama del sprint, sin rastrear la base:
+
+      ```bash
+      git -C <raíz>/<carpeta> worktree add --no-track <raíz>/.worktrees/<tema>/<carpeta> -b <tema> origin/<base>
+      ```
+
+      No la subas todavía: se sube con su primer commit, `push -u origin
+      <tema>`.
+    - **No lo cambia y se monta `siempre`**: sin rama, para que al cerrar
+      no haya nada que fundir:
+
+      ```bash
+      git -C <raíz>/<carpeta> worktree add --detach <raíz>/.worktrees/<tema>/<carpeta> origin/<base>
+      ```
+
+    - **No lo cambia y se monta `si el sprint lo cambia`**: nada.
+
+    Después corre, en el worktree nuevo, los comandos de «Worktree» de
+    `docs/COMANDA.md` (`<principal>` es `<raíz>`, `<tema>` el del sprint),
+    cada uno como `cd <raíz>/.worktrees/<tema> && <comando>`, en la misma
+    llamada: la sesión no sale de su carpeta. Y sube la rama `<tema>` del
+    proyecto desde la raíz, no desde el worktree —un remoto con URL relativa
     (`../repo.git`) sólo apunta bien desde ahí—: `git -C <raíz> push -u
     origin <tema>`.
 
@@ -177,6 +216,7 @@ crece, es una tarea y se dice.
 
 ## Al terminar
 
-El tema, las tareas con su orden, lo reservado, la primera que conviene atacar
-y por qué, y **dónde seguir**: la ruta de `**Worktree:**`, y que ahí se abre una
+El tema, las tareas con su orden, lo reservado, qué repos hijos quedaron
+montados y en qué rama, la primera que conviene atacar y por qué, y **dónde
+seguir**: la ruta de `**Worktree:**`, y que ahí se abre una
 sesión nueva y se teclea `/comanda:next`.

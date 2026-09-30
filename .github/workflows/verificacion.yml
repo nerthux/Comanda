@@ -26,4 +26,4 @@ jobs:
         run: bash pruebas/sin-citas.sh
 
       - name: shellcheck
-        run: shellcheck bin/comanda-main pruebas/comanda-main.sh pruebas/sin-citas.sh pruebas/juguete-worktrees.sh
+        run: shellcheck bin/comanda-main pruebas/comanda-main.sh pruebas/sin-citas.sh pruebas/juguete-worktrees.sh pruebas/juguete-hijos.sh

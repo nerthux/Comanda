@@ -22,7 +22,9 @@ Todo en una rama aparte, en su propio worktree, y fundido por una persona.
    hacía y el método no sabe va a «Reglas del proyecto»: los comandos las
    respetan como si estuvieran escritas en ellos (por ejemplo: el supuesto
    por defecto en vez de preguntar, el prefijo `docs:` en los commits, la
-   cuota limitada).
+   cuota limitada). Un repo aparte que el proyecto ya lleva dentro —Odoo.sh,
+   el GitHub del cliente— no va ahí sino a «Repos hijos», con su renglón:
+   los comandos lo buscan en esa sección.
 4. **Los comandos de «Worktree», probados**: monta un worktree con ellos y
    corre ahí la verificación completa. Un enlace a una carpeta ignorada con
    `carpeta/` en `.gitignore` sale como archivo nuevo: el patrón va sin barra.

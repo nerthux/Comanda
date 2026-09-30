@@ -102,7 +102,7 @@ código viven juntos, y el código, si lo hay, en su carpeta.
 ```
 docs/            el método (BUZON, ROADMAP, DECISIONES, COMANDA, sprints/) y los papeles del proyecto
 datos/           fuera de git; su README.md dice dónde viven   ·   scripts/   ·   entregables/ si los hay
-odoo/  o  app/   sólo si hay código; un repo hijo va aparte e ignorado, declarado en prosa en docs/COMANDA.md
+odoo/  o  app/   sólo si hay código; un repo hijo va aparte e ignorado, declarado en «Repos hijos» de docs/COMANDA.md
 .worktrees/      un sprint por carpeta, que crea /comanda:sprint abrir; excluida de git
 ```
 
@@ -141,7 +141,8 @@ odoo/  o  app/   sólo si hay código; un repo hijo va aparte e ignorado, declar
 3. El agente pasa lo que ya hay a los documentos del método sin perder
    nada: las decisiones conservan sus ids, la bitácora pasa tal cual al
    CHANGELOG y lo abierto va al ROADMAP. Lo que el proyecto ya hacía y el
-   método no sabe va a «Reglas del proyecto» de `docs/COMANDA.md`.
+   método no sabe va a «Reglas del proyecto» de `docs/COMANDA.md`, y un
+   repo aparte que lleve dentro, a «Repos hijos».
 4. Si hay un `docs/SPRINT.md` abierto del método viejo, decides tú si se
    termina como antes o se pasa a Comanda.
 5. Pruébalo antes de fundir, sin tocar el remoto real: un clon `--bare` en
@@ -182,15 +183,16 @@ claude plugin validate .claude-plugin/plugin.json   # el manifiesto del plugin
 bash -n bin/comanda-main                     # la sintaxis
 bash pruebas/comanda-main.sh                 # el candado, con dos clones y un remoto local
 bash pruebas/sin-citas.sh                    # nada público cita lo privado
-shellcheck bin/comanda-main pruebas/comanda-main.sh pruebas/sin-citas.sh pruebas/juguete-worktrees.sh
+shellcheck bin/comanda-main pruebas/comanda-main.sh pruebas/sin-citas.sh pruebas/juguete-worktrees.sh pruebas/juguete-hijos.sh
 claude --plugin-dir /ruta/a/Comanda          # probar un cambio sin instalarlo
 ```
 
 `validate` lleva la ruta del manifiesto y no `.`: con `marketplace.json` en
 la misma carpeta, `.` valida sólo el marketplace. El CI corre todo esto en
 cada push y PR, menos `validate`. `bash pruebas/juguete-worktrees.sh` prueba
-los skills de punta a punta en un repo de juguete; se corre a mano, porque
-abre varias sesiones de `claude -p`.
+los skills de punta a punta en un repo de juguete, y `bash
+pruebas/juguete-hijos.sh`, lo mismo con tres repos hijos; se corren a mano,
+porque abren varias sesiones de `claude -p`.
 
 Con `--plugin-dir`, el `bin/` que va primero en el `PATH` es el del plugin
 instalado: si el cambio toca `bin/`, antepón `PATH=/ruta/a/Comanda/bin:$PATH`.

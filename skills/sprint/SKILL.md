@@ -13,19 +13,25 @@ termina.
 
 **Antes que nada, lee `docs/COMANDA.md` de tu checkout**, antes de la primera
 `comanda-main`. De ahí salen las personas y el
-cliente, el remoto y la rama principal, el worktree, los techos, el camino
-crítico, las numeraciones, las migraciones, la verificación, los recorridos y
+cliente, el remoto y la rama principal, el worktree, los repos hijos, los
+techos, el camino crítico, las numeraciones, las migraciones, la verificación, los recorridos y
 las reglas del proyecto. Cuando aquí se nombra una de esas cosas, es lo que ese
 archivo dice; si una sección dice `no aplica`, sáltate lo que dependa de ella.
 Aquí se escribe `origin` y `main`; si el archivo dice otros, usa ésos, y
 antepón `COMANDA_REMOTO=<remoto> COMANDA_PRINCIPAL=<rama>` a cada
-`comanda-main`.
+`comanda-main`. **Si tu checkout no tiene `docs/COMANDA.md`, para** y di que
+la sesión se abre en la raíz del proyecto: desde la carpeta de un repo hijo,
+los comandos lo tomarían por el proyecto.
 
 **Un comando por llamada.** `allowed-tools` autoriza cada comando suelto;
 uno compuesto (`… && …`, `…; …`, `… || …`) se niega y cuesta un turno.
 Cada renglón de un bloque va en su propia llamada —los que no dependen uno
 de otro, en llamadas paralelas de una misma respuesta—, y en vez de
-`cd W && …` se usa `git -C W …`.
+`cd W && …` se usa `git -C W …`. La excepción es lo que tiene que correr
+dentro de otra carpeta y no admite `git -C`, como los comandos de
+«Worktree» en `abrir`: va `cd <ruta> && <comando>`, en la misma llamada,
+porque la sesión no sale de la carpeta donde se abrió y un `cd` suelto se
+regresa solo.
 
 **Quién eres:** `git config user.name`, buscado en «Personas». Si no está,
 dilo y para: los techos se cuentan por persona.
