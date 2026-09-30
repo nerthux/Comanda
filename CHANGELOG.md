@@ -4,6 +4,39 @@ Lo que cambió en cada versión del plugin. **Lo más nuevo va arriba.** El
 formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y
 las versiones, [SemVer](https://semver.org/lang/es/).
 
+## [0.7.0] — 2026-09-29
+
+### Agregado
+
+- **La sección «Repos hijos» de `docs/COMANDA.md`.** Un repo aparte dentro
+  del proyecto (`odoo/`, `app/`) se declara en un renglón de forma fija
+  —carpeta, clon, base, cuándo se monta y quién lo funde— en lugar de en
+  prosa, y los comandos lo leen de ahí. Sin hijo, `no aplica`. `ARRANCAR`,
+  `ADOPTAR`, el esqueleto y el README apuntan a ella.
+- **`pruebas/juguete-hijos.sh`**: prueba de punta a punta, con `claude -p`,
+  un proyecto con tres repos hijos; se corre a mano, como el otro juguete.
+
+### Cambiado
+
+- **`/comanda:sprint abrir` monta cada repo hijo** según su renglón: en la
+  rama del sprint si alguna tarea nombra su carpeta, sin rama si sólo se
+  monta siempre; lo clona si falta. Para si se corre desde dentro de un
+  hijo, o si la raíz no tiene `docs/COMANDA.md`, y dice que la sesión se
+  abre en la raíz del proyecto.
+- **`/comanda:sprint entregar` y `/comanda:next` no rebasan si el rebase
+  toca un repo hijo**: si algún commit del rango toca su carpeta en el repo
+  del proyecto, paran y dicen cuál, porque reaplicarlo borraría los archivos
+  del worktree del hijo sin avisar.
+- **`/comanda:sprint cerrar` funde y limpia el repo hijo**, antes que el
+  proyecto: lo funde si lo funde el agente —preguntando antes cuando fundir
+  despliega—, o comprueba que una persona ya lo fundió; si algo falla, para
+  antes de publicar. Quita el worktree del hijo antes que el del sprint y
+  borra su rama, local y remota, sólo si ya está en su base. Una rama del
+  hijo que nunca se subió y no tiene nada fuera de su base no lo frena. La
+  fila del CHANGELOG cita el commit del hijo.
+- Los comandos de «Worktree» corren como `cd <ruta> && <comando>` en la
+  misma llamada, la única excepción a un comando por llamada.
+
 ## [0.6.0] — 2026-09-29
 
 ### Agregado
