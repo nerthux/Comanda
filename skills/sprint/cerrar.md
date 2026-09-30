@@ -27,10 +27,15 @@ git -C <raíz>/<carpeta> rev-parse --verify --quiet refs/heads/<tema>
 - **Sin rama `<tema>`**, ni en el remoto ni en local, el sprint no cambió
   el hijo: no hay qué fundir, y su worktree, si lo montó, se quita en el
   paso 12.
+- **Rama local sin `origin/<tema>`**: `abrir` la crea y se sube con su
+  primer commit, así que puede no haberse subido nunca. Si
+  `git -C <raíz>/<carpeta> merge-base --is-ancestor <tema> origin/<base>`
+  sale con 0, no tiene nada fuera de su base: es como si no hubiera rama
+  —nada que fundir—, y en el paso 12 se borra la local. Si no, **para**:
+  tiene commits sin subir; di cuáles y que los suba su dueño.
 - **Si hay rama local y no está entera en el remoto**
   (`git -C <raíz>/<carpeta> merge-base --is-ancestor <tema> origin/<tema>`
-  sale distinto de 0, o no hay `origin/<tema>`), **para**: tiene commits sin
-  subir; di cuáles y que los suba su dueño.
+  sale distinto de 0), **para**, por lo mismo.
 
 Luego, según **funde**:
 
@@ -211,7 +216,8 @@ rev-parse --short origin/<tema>`— o que se difirió.
     ```
 
     Los dos últimos sólo si el primero salió con 0, y el `branch -D` sólo si
-    hay rama local. Un hijo diferido a §4 no está en su base: su worktree se
+    hay rama local. Sin `origin/<tema>` —la rama no se subió nunca y no
+    tiene nada fuera de su base, arriba—, sólo va el `branch -D`. Un hijo diferido a §4 no está en su base: su worktree se
     quita igual, y su rama se queda, local y remota, y se dice. Si `pwd` está
     dentro del worktree del hijo, no los corras: van a la lista que se le da
     a quien cierra, abajo, antes que los del sprint.
