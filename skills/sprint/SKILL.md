@@ -13,8 +13,8 @@ termina.
 
 **Antes que nada, lee `docs/COMANDA.md` de tu checkout**, antes de la primera
 `comanda-main`. De ahí salen las personas y el
-cliente, el remoto y la rama principal, el worktree, los techos, el camino
-crítico, las numeraciones, las migraciones, la verificación, los recorridos y
+cliente, el remoto y la rama principal, el worktree, los repos hijos, los
+techos, el camino crítico, las numeraciones, las migraciones, la verificación, los recorridos y
 las reglas del proyecto. Cuando aquí se nombra una de esas cosas, es lo que ese
 archivo dice; si una sección dice `no aplica`, sáltate lo que dependa de ella.
 Aquí se escribe `origin` y `main`; si el archivo dice otros, usa ésos, y

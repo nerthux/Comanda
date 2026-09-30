@@ -46,7 +46,8 @@ Un proyecto sin código es esto sin `odoo/` ni `app/`, y nada más cambia.
    que no haya dos versiones que se desfasen.
 3. **Llenar `docs/COMANDA.md`**: las personas y quién mueve el camino
    crítico, el cliente, sus nombres y el canal para preguntarle, el remoto y
-   la principal, el worktree, los techos y las reglas del proyecto. Una
+   la principal, el worktree, los repos hijos (paso 4), los techos y las
+   reglas del proyecto. Una
    sección que no aplica dice `no aplica` —la verificación, mientras no haya
    nada que correr— y **no se quitan los títulos**. `datos/` no está en git,
    así que no llega al worktree de un sprint: si un sprint los va a usar,
@@ -58,10 +59,10 @@ Un proyecto sin código es esto sin `odoo/` ni `app/`, y nada más cambia.
    nadie lo despliega desde git. Un repo hijo:
    - va aparte e ignorado, **no como submódulo**: descomenta su línea en
      `.gitignore` y clónalo en `odoo/`;
-   - se declara **en prosa**, en «Reglas del proyecto» de `docs/COMANDA.md`:
-     de dónde se clona, cómo se llama su rama por sprint y qué es fundir. Los
-     comandos todavía no saben de repos hijos: lo que haga falta lo lee el
-     agente de ahí;
+   - se declara con **un renglón en «Repos hijos»** de `docs/COMANDA.md`,
+     con la forma que trae la plantilla: carpeta, clon, base, cuándo se
+     monta y quién lo funde. Los comandos lo leen de ahí; sin hijo, la
+     sección dice `no aplica`;
    - en cada sprint, su worktree va dentro del del sprint, en la rama del
      sprint y **con ruta absoluta** (con una relativa, desde `odoo/`, cae en
      `odoo/.worktrees/…`), sacada de la rama base recién traída y sin
@@ -107,7 +108,7 @@ Un proyecto sin código es esto sin `odoo/` ni `app/`, y nada más cambia.
    buzón, las reservas y el triage.
 9. **El primer sprint, sin buzón**: `/comanda:sprint abrir` contra el §3 del
    paso 6. El buzón está vacío y no hay nada que triar; el sprint queda en
-   `<raíz>/.worktrees/<tema>`. Si hay repo hijo, `abrir` lee «Reglas del
-   proyecto» y suele montar su worktree; comprueba que esté, en la rama
+   `<raíz>/.worktrees/<tema>`. Si hay repo hijo, `abrir` lee «Repos
+   hijos» y monta su worktree; comprueba que esté, en la rama
    `<tema>`, y si no, móntalo como dice el paso 4. Ahí, `/clear` y
    `/comanda:next`.

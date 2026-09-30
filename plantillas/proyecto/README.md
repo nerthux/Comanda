@@ -18,7 +18,7 @@ entregables/   informes y presentaciones, si los hay
 ```
 
 <Si hay código: `odoo/` o `app/`, qué es y, si es repo aparte, de dónde se
-clona — lo demás está en `docs/COMANDA.md`, «Reglas del proyecto».>
+clona — lo demás está en `docs/COMANDA.md`, «Repos hijos».>
 
 ## Cómo se trabaja
 

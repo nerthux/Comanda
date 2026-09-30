@@ -102,7 +102,7 @@ código viven juntos, y el código, si lo hay, en su carpeta.
 ```
 docs/            el método (BUZON, ROADMAP, DECISIONES, COMANDA, sprints/) y los papeles del proyecto
 datos/           fuera de git; su README.md dice dónde viven   ·   scripts/   ·   entregables/ si los hay
-odoo/  o  app/   sólo si hay código; un repo hijo va aparte e ignorado, declarado en prosa en docs/COMANDA.md
+odoo/  o  app/   sólo si hay código; un repo hijo va aparte e ignorado, declarado en «Repos hijos» de docs/COMANDA.md
 .worktrees/      un sprint por carpeta, que crea /comanda:sprint abrir; excluida de git
 ```
 
@@ -141,7 +141,8 @@ odoo/  o  app/   sólo si hay código; un repo hijo va aparte e ignorado, declar
 3. El agente pasa lo que ya hay a los documentos del método sin perder
    nada: las decisiones conservan sus ids, la bitácora pasa tal cual al
    CHANGELOG y lo abierto va al ROADMAP. Lo que el proyecto ya hacía y el
-   método no sabe va a «Reglas del proyecto» de `docs/COMANDA.md`.
+   método no sabe va a «Reglas del proyecto» de `docs/COMANDA.md`, y un
+   repo aparte que lleve dentro, a «Repos hijos».
 4. Si hay un `docs/SPRINT.md` abierto del método viejo, decides tú si se
    termina como antes o se pasa a Comanda.
 5. Pruébalo antes de fundir, sin tocar el remoto real: un clon `--bare` en
