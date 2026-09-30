@@ -114,7 +114,15 @@ aclara antes, no a media tarea.
    siguiente libre contando las reservas de todos, la cabecera del sprint
    **en `W`** al día, `comanda-main publicar --reserva`). Ese `publicar`
    movió la principal y tu rama ya no la contiene —el candado de migración
-   fallaría—: **rebasa** (`git fetch origin`, `git rebase origin/main`), que
+   fallaría—: hay que rebasar. **Antes, mira los repos hijos**, si «Repos
+   hijos» no dice `no aplica`: por cada renglón, con su carpeta, en el repo
+   del proyecto, `git log --oneline HEAD..origin/main -- <carpeta>` y
+   `git log --oneline origin/main..HEAD -- <carpeta>`, cada uno en su
+   llamada. Si alguno imprime algo, **no rebases**: di qué hijo y qué
+   commits, y para. Ahí la carpeta está ignorada, así que un commit que la
+   toca es de antes de que fuera hijo, y el rebase lo volvería a aplicar y
+   borraría sin avisar los archivos del worktree del hijo. Si no imprimen
+   nada, **rebasa** (`git fetch origin`, `git rebase origin/main`), que
    de paso trae la nueva línea de reservas a tu archivo del sprint, y si la
    rama ya estaba subida, `git push --force-with-lease origin <tema>`. Si el
    rebase choca en el archivo del sprint, se queda el de la rama —es el
@@ -180,7 +188,8 @@ git merge-base --is-ancestor origin/main HEAD
 
 Si el segundo sale con código distinto de 0, la rama no tiene lo último de
 la principal —quizá otro sprint ya aplicó y fundió una migración—: **para**,
-di qué le falta y propón rebasar antes. Luego los «Candados» del proyecto, si
+di qué le falta y propón rebasar antes, tras mirar los repos hijos como en
+el paso 2. Luego los «Candados» del proyecto, si
 los hay. Después la aplicas como ahí se dice y anotas «aplicada el …» en sus
 notas y en el archivo del sprint.
 El aviso al cliente va después y lo manda una persona.

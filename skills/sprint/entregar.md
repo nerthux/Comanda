@@ -26,6 +26,19 @@ archiva nada: eso es de `cerrar`.
    "Verificación al entregar", y son las que `cerrar` copiará a `ROADMAP.md`
    §1.
 
+   **Antes de rebasar, mira los repos hijos**, si «Repos hijos» no dice
+   `no aplica`. Por cada renglón, con su carpeta, en el repo del proyecto:
+
+   ```bash
+   git log --oneline HEAD..origin/main -- <carpeta>
+   git log --oneline origin/main..HEAD -- <carpeta>
+   ```
+
+   Si alguno imprime algo, **no rebases**: di qué hijo y qué commits, y
+   para. Ahí la carpeta está ignorada, así que un commit que la toca es de
+   antes de que fuera hijo, y el rebase lo volvería a aplicar y borraría
+   sin avisar los archivos del worktree del hijo.
+
 2. **Cada tarea con su estado real**: `hecho` (verificado y sin nada que espere
    a una persona) o `entregado` (le falta ver en el navegador, avisar o fundir;
    si la migración la aplica el agente según `docs/COMANDA.md`, aplicarla ya no
