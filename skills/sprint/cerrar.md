@@ -11,6 +11,56 @@ navegador, avisado al cliente. Si no lo ha confirmado, pregúntale qué de "Lo
 que te toca a ti" ya hizo y qué difiere; **lo diferido va a `ROADMAP.md` §4
 con fecha de entrada y dueño**, y con eso el sprint sí cierra.
 
+**Antes de fundir el proyecto, los repos hijos**, si «Repos hijos» no dice
+`no aplica`. El hijo va primero: si fundirlo falla, el cierre para antes de
+publicar, y así nunca dice «fundido» de algo que no lo está. Por cada
+renglón, en el clon del hijo, `<raíz>/<carpeta>` —`<raíz>` es la primera
+línea de `git worktree list --porcelain`—, con su remoto `origin` y la
+`<base>` del renglón:
+
+```bash
+git -C <raíz>/<carpeta> fetch origin
+git -C <raíz>/<carpeta> rev-parse --verify --quiet origin/<tema>
+git -C <raíz>/<carpeta> rev-parse --verify --quiet refs/heads/<tema>
+```
+
+- **Sin rama `<tema>`**, ni en el remoto ni en local, el sprint no cambió
+  el hijo: no hay qué fundir, y su worktree, si lo montó, se quita en el
+  paso 12.
+- **Si hay rama local y no está entera en el remoto**
+  (`git -C <raíz>/<carpeta> merge-base --is-ancestor <tema> origin/<tema>`
+  sale distinto de 0, o no hay `origin/<tema>`), **para**: tiene commits sin
+  subir; di cuáles y que los suba su dueño.
+
+Luego, según **funde**:
+
+- **`el agente al cerrar`.** Si termina en `y eso despliega`, pregunta antes
+  con AskUserQuestion si se funde ya; si dice que no, o no hay persona que
+  conteste, no lo fundas: va diferido a §4 (paso 4). Para fundir, el clon del
+  hijo tiene que estar en `<base>` y limpio (`git -C <raíz>/<carpeta> status
+  --short --branch`); si no, **para** y di en qué está. Después, una llamada
+  cada uno:
+
+  ```bash
+  git -C <raíz>/<carpeta> merge --ff-only origin/<base>
+  git -C <raíz>/<carpeta> merge --no-ff origin/<tema> -m "Fundir <tema>: <en una frase, qué deja>"
+  git -C <raíz>/<carpeta> push origin <base>
+  ```
+
+  Si el merge choca, `git -C <raíz>/<carpeta> merge --abort` y **para**: di
+  qué choca; lo arregla el dueño del sprint rebasando la rama del hijo. Si el
+  push se rechaza, alguien movió la base: **para** y dilo; el merge queda en
+  el clon, sin subir.
+- **`una persona, por PR` o `una persona, a mano`.** No lo fundes: comprueba
+  que ya esté en su base
+  (`git -C <raíz>/<carpeta> merge-base --is-ancestor origin/<tema> origin/<base>`).
+  Si no lo está, pregunta con AskUserQuestion entre **esperar** —el cierre
+  para aquí, sin haber tocado nada— y **diferirlo a §4** (paso 4).
+
+De cada hijo guarda, para la fila del CHANGELOG, el commit con que quedó en
+su base —el merge, si lo hizo el agente; si no, `git -C <raíz>/<carpeta>
+rev-parse --short origin/<tema>`— o que se difirió.
+
 1. **Funde**, según «Cómo se funde» en `docs/COMANDA.md`:
    - `PR` → `gh pr merge <tema> --merge` (si no hay PR, ábrelo antes). Después,
      `comanda-main ruta` → `W`, que ya trae lo fundido.
@@ -33,7 +83,8 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
 3. **Reparte las tareas por su estado real:**
    - `hecho`, y lo `entregado` que quien cierra confirmó → **una fila en
      `CHANGELOG.md`** (al final; sólo se apende) con lo que dejó el sprint y
-     dónde está su bitácora. Si hubo migración, se comprueba que esté anotada
+     dónde está su bitácora y, por cada repo hijo que el sprint cambió, su
+     carpeta con el commit que quedó en su base, o «diferido a §4». Si hubo migración, se comprueba que esté anotada
      en sus notas. En `ROADMAP.md` §3, el tramo conserva sólo lo abierto y
      **una línea** por lo cerrado, con enlace al CHANGELOG; los renglones de
      «De paso» que el sprint hizo se borran;
@@ -45,6 +96,8 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
 4. **Lo que quedó de "Lo que te toca a ti"** se copia a §4 con fecha y dueño,
    **en el mismo formato** (título en llano, qué es, qué hacer, qué destraba);
    lo que ya se hizo, se borra. **Lo tachado de §4 se borra**, no se deja.
+   Un repo hijo que no se fundió entra igual: qué hacer es fundir `<tema>` a
+   su `<base>` y luego quitar su worktree y su rama.
 
 5. Refresca `ROADMAP.md`: §1 con la verificación de `entregar` (o repítela si
    pasó tiempo) y la fecha de hoy; **§2 con la numeración real** —los comandos
@@ -139,6 +192,30 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
     una que construyas: un sprint abierto con 0.2.x dice
     `../<carpeta>-<tema>` y cierra ahí, aunque hoy la ruta sea otra.
 
+    **Primero los repos hijos**, uno por renglón: su worktree va dentro del
+    del sprint, y quitar el del sprint borra la carpeta y deja el del hijo
+    colgado en su clon. Si `git -C <raíz>/<carpeta> worktree list` trae
+    `<ruta de **Worktree:**>/<carpeta>` y está limpio, quítalo:
+
+    ```bash
+    git -C <raíz>/<carpeta> worktree remove <ruta de **Worktree:**>/<carpeta>
+    ```
+
+    Si tiene cambios, no lo quites, ni tampoco el del sprint: di qué tiene
+    y que lo decida su dueño. Después, su rama, sólo si ya está en su base:
+
+    ```bash
+    git -C <raíz>/<carpeta> merge-base --is-ancestor origin/<tema> origin/<base>
+    git -C <raíz>/<carpeta> branch -D <tema>
+    git -C <raíz>/<carpeta> push origin --delete <tema>
+    ```
+
+    Los dos últimos sólo si el primero salió con 0, y el `branch -D` sólo si
+    hay rama local. Un hijo diferido a §4 no está en su base: su worktree se
+    quita igual, y su rama se queda, local y remota, y se dice. Si `pwd` está
+    dentro del worktree del hijo, no los corras: van a la lista que se le da
+    a quien cierra, abajo, antes que los del sprint.
+
     **Si `pwd` está dentro de esa ruta, no quites el worktree ni borres la
     rama local:** la sesión no puede salir de la carpeta donde se abrió —un
     `cd` a la raíz se regresa solo—, tras el `remove` cada comando falla con
@@ -177,4 +254,6 @@ con fecha de entrada y dueño**, y con eso el sprint sí cierra.
 Qué se cerró, qué se difirió a §4 y con qué fecha, qué regresó al backlog y por
 qué, cuántas `D-n` subieron —con su `DEC-NNN`— y cuántas no, por destino,
 qué lecciones entraron a «Reglas del proyecto» —con su renglón— y cuántas se
-propusieron y no, y las dos cifras del ROADMAP (antes y después).
+propusieron y no, qué pasó con cada repo hijo —fundido, con su commit;
+comprobado; diferido a §4— y si su worktree y su rama quedaron quitados, y
+las dos cifras del ROADMAP (antes y después).
